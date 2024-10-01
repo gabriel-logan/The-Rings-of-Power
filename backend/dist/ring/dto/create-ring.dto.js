@@ -18,7 +18,7 @@ exports.CreateRingDto = CreateRingDto;
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.Length)(3, 20),
+    (0, class_validator_1.Length)(3, 35),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], CreateRingDto.prototype, "name", void 0);

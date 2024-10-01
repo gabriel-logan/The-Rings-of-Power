@@ -6,7 +6,7 @@ import type { ForgedBy } from "../types/ForgedBy";
 export class CreateRingDto {
   @IsString()
   @IsNotEmpty()
-  @Length(3, 20)
+  @Length(3, 35)
   @ApiProperty()
   public name!: string; // Ex: "Narya, the Ring of Fire"
 
