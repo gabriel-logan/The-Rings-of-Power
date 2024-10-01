@@ -1,19 +1,18 @@
 import { Logger } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import type { SequelizeModuleAsyncOptions } from "@nestjs/sequelize";
-import type { Dialect } from "sequelize";
 
 const sequelizeAsyncConfig: SequelizeModuleAsyncOptions = {
   imports: [ConfigModule],
   useFactory: (configService: ConfigService) => {
     const logger = new Logger("SequelizeConfig");
     return {
-      dialect: configService.get("database.dialect") as Dialect,
-      host: configService.get("database.host"),
-      port: configService.get("database.port"),
-      username: configService.get("database.username"),
-      password: configService.get("database.password"),
-      database: configService.get("database.name"),
+      dialect: "postgres",
+      host: configService.get("postgresHost"),
+      port: configService.get("postgresPort"),
+      username: configService.get("postgresUser"),
+      password: configService.get("postgresPassword"),
+      database: configService.get("postgresDatabase"),
       autoLoadModels: true,
 
       dialectOptions: {

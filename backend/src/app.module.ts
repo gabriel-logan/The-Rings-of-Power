@@ -7,6 +7,7 @@ import { join } from "path";
 import { AppController } from "./app.controller";
 import { AuthModule } from "./auth/auth.module";
 import envGlobal from "./configs/env.global";
+import envPostgresSql from "./configs/env.postgres.sql";
 import sequelizeAsyncConfig from "./configs/sequelize.config";
 import { RingModule } from "./ring/ring.module";
 import { UserModule } from "./user/user.module";
@@ -14,7 +15,7 @@ import { UserModule } from "./user/user.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [envGlobal],
+      load: [envGlobal, envPostgresSql],
     }),
     SequelizeModule.forRootAsync(sequelizeAsyncConfig),
     ServeStaticModule.forRoot({
