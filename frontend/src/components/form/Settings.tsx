@@ -63,7 +63,7 @@ export default function SettingsForm({
         {
           username: username || undefined,
           password,
-          newPassword: newPassword || undefined,
+          newPassword,
         },
         {
           headers: {
