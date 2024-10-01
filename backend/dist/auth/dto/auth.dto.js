@@ -18,12 +18,14 @@ exports.AuthDto = AuthDto;
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(3, 20),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], AuthDto.prototype, "username", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(4, 255),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], AuthDto.prototype, "password", void 0);
