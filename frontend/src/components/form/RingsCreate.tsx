@@ -41,8 +41,8 @@ export default function RingsCreateForm({ token }: RingsCreateFormProps) {
       return toast.error("Please fill out all fields.");
     }
 
-    if (name.length > 20) {
-      return toast.error("The name must be less than 20 characters.");
+    if (name.length > 35) {
+      return toast.error("The name must be less than 35 characters.");
     }
 
     if (power.length > 255) {
