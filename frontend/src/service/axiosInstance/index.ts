@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const baseURL = "http://192.168.100.3:3000";
+export const baseURL = "https://api-junior-challenge.vercel.app";
 
 const axiosInstance = axios.create({
   baseURL,
