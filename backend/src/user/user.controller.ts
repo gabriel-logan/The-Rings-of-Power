@@ -1,3 +1,4 @@
+import { CacheInterceptor } from "@nestjs/cache-manager";
 import {
   Body,
   Controller,
@@ -9,6 +10,7 @@ import {
   Put,
   Req,
   UseGuards,
+  UseInterceptors,
   ValidationPipe,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -22,6 +24,7 @@ import { ReqAuthUser } from "./types/Req";
 import { UserService } from "./user.service";
 
 @Controller("user")
+@UseInterceptors(CacheInterceptor)
 @ApiTags("User")
 export class UserController {
   constructor(private readonly userService: UserService) {}

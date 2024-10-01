@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
+const cache_manager_1 = require("@nestjs/cache-manager");
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const auth_guard_1 = require("../auth/auth.guard");
@@ -85,6 +86,7 @@ __decorate([
 ], UserController.prototype, "delete", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.Controller)("user"),
+    (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
     (0, swagger_1.ApiTags)("User"),
     __metadata("design:paramtypes", [user_service_1.UserService])
 ], UserController);

@@ -1,3 +1,4 @@
+import { CacheInterceptor } from "@nestjs/cache-manager";
 import {
   Body,
   Controller,
@@ -26,6 +27,7 @@ import { ReqAuthUser } from "./types/Req";
 
 @Controller("ring")
 @UseGuards(AuthGuard)
+@UseInterceptors(CacheInterceptor)
 @ApiTags("Ring")
 @ApiBearerAuth("defaultBearerAuth")
 export class RingController {

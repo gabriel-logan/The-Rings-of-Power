@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RingController = void 0;
+const cache_manager_1 = require("@nestjs/cache-manager");
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const swagger_1 = require("@nestjs/swagger");
@@ -154,6 +155,7 @@ __decorate([
 exports.RingController = RingController = __decorate([
     (0, common_1.Controller)("ring"),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
     (0, swagger_1.ApiTags)("Ring"),
     (0, swagger_1.ApiBearerAuth)("defaultBearerAuth"),
     __metadata("design:paramtypes", [ring_service_1.RingService])

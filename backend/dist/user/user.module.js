@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserModule = void 0;
+const cache_manager_1 = require("@nestjs/cache-manager");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
@@ -19,7 +20,14 @@ let UserModule = class UserModule {
 exports.UserModule = UserModule;
 exports.UserModule = UserModule = __decorate([
     (0, common_1.Module)({
-        imports: [sequelize_1.SequelizeModule.forFeature([user_entity_1.User]), config_1.ConfigModule, jwt_1.JwtModule],
+        imports: [
+            sequelize_1.SequelizeModule.forFeature([user_entity_1.User]),
+            config_1.ConfigModule,
+            jwt_1.JwtModule,
+            cache_manager_1.CacheModule.register({
+                ttl: 60000 * 10,
+            }),
+        ],
         controllers: [user_controller_1.UserController],
         providers: [user_service_1.UserService],
     })
