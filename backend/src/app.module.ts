@@ -19,9 +19,9 @@ import { UserModule } from "./user/user.module";
     }),
     SequelizeModule.forRootAsync(sequelizeAsyncConfig),
     ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), "uploads"),
-      serveRoot: "/uploads",
-      renderPath: "/uploads",
+      rootPath: join(__dirname, "..", "public"),
+      serveRoot: "/",
+      renderPath: "/",
     }),
     RingModule,
     UserModule,

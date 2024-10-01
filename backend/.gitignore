@@ -60,3 +60,5 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 *.jpeg
 *.gif
 .vercel
+
+azure-translator-code-api
