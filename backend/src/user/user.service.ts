@@ -28,6 +28,7 @@ export class UserService {
   private readonly port: string;
   private readonly nodeEnv: string;
   public readonly baseUrl: string;
+  private readonly blobReadWriteToken: string;
 
   constructor(
     @InjectModel(User)
@@ -39,6 +40,8 @@ export class UserService {
     this.nodeEnv = this.configService.get<string>("nodeEnv")!;
     this.baseUrl =
       this.nodeEnv === "development" ? `${this.host}:${this.port}` : this.host;
+    this.blobReadWriteToken =
+      this.configService.get<string>("blobReadWriteToken")!;
   }
 
   async findAll(): Promise<User[]> {
@@ -53,7 +56,9 @@ export class UserService {
 
     users.forEach((user) => {
       user.rings.forEach((ring) => {
-        ring.url = `${this.baseUrl}/uploads/${ring.image}`;
+        // ring.url = `${this.baseUrl}/uploads/${ring.image}`;
+
+        ring.url = ring.image;
       });
     });
 
@@ -73,7 +78,9 @@ export class UserService {
     }
 
     user.rings.forEach((ring) => {
-      ring.url = `${this.baseUrl}/uploads/${ring.image}`;
+      // ring.url = `${this.baseUrl}/uploads/${ring.image}`;
+
+      ring.url = ring.image;
     });
 
     return user;
@@ -91,7 +98,9 @@ export class UserService {
     }
 
     user.rings.forEach((ring) => {
-      ring.url = `${this.baseUrl}/uploads/${ring.image}`;
+      // ring.url = `${this.baseUrl}/uploads/${ring.image}`;
+
+      ring.url = ring.image;
     });
 
     return user;

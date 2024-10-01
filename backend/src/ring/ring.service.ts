@@ -6,6 +6,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/sequelize";
+import { put, del } from "@vercel/blob";
 
 import RingGlobalValidations from "./RingGlobalValidations";
 import { CreateRingDto } from "./dto/create-ring.dto";
@@ -21,6 +22,7 @@ export class RingService extends RingGlobalValidations {
   private readonly port: string;
   private readonly nodeEnv: string;
   private readonly baseUrl: string;
+  private readonly blobReadWriteToken: string;
 
   constructor(
     @InjectModel(Ring)
@@ -33,6 +35,8 @@ export class RingService extends RingGlobalValidations {
     this.nodeEnv = this.configService.get<string>("nodeEnv")!;
     this.baseUrl =
       this.nodeEnv === "development" ? `${this.host}:${this.port}` : this.host;
+    this.blobReadWriteToken =
+      this.configService.get<string>("blobReadWriteToken")!;
   }
 
   async findAll(req: ReqAuthUser): Promise<Ring[]> {
@@ -47,7 +51,8 @@ export class RingService extends RingGlobalValidations {
     }
 
     rings.forEach((ring) => {
-      ring.url = `${this.baseUrl}/uploads/${ring.image}`;
+      // ring.url = `${this.baseUrl}/uploads/${ring.image}`;
+      ring.url = ring.image;
     });
 
     return rings;
@@ -65,7 +70,9 @@ export class RingService extends RingGlobalValidations {
       throw new NotFoundException(`Ring with id ${id} not found`);
     }
 
-    ring.url = `${this.baseUrl}/uploads/${ring.image}`;
+    // ring.url = `${this.baseUrl}/uploads/${ring.image}`;
+
+    ring.url = ring.image;
 
     return ring;
   }
@@ -88,8 +95,13 @@ export class RingService extends RingGlobalValidations {
       req.user.sub,
     );
 
+    const blob = await put(file.originalname, file.buffer, {
+      access: "public",
+      token: this.blobReadWriteToken,
+    });
+
     // Save or update ring image
-    const imageSaved = await this.saveOrUpdateRingImage(file);
+    // const imageSaved = await this.saveOrUpdateRingImage(file);
 
     let newRing: Ring;
 
@@ -99,14 +111,16 @@ export class RingService extends RingGlobalValidations {
         power,
         owner,
         forgedBy,
-        image: imageSaved,
+        image: blob.url,
         userId: req.user.sub,
       });
     } catch {
       throw new BadRequestException("Error creating ring");
     }
 
-    newRing.url = `${this.baseUrl}/uploads/${newRing.image}`;
+    // newRing.url = `${this.baseUrl}/uploads/${newRing.image}`;
+
+    newRing.url = blob.url;
 
     return newRing;
   }
@@ -146,12 +160,21 @@ export class RingService extends RingGlobalValidations {
 
     // Save or update ring image
     if (file) {
+      /**
       const imageSaved = await this.saveOrUpdateRingImage(file, {
-        isUpdate: true,
-        oldFileName: ring.image,
+          isUpdate: true,
+          oldFileName: ring.image,
+      });
+      */
+
+      const blob = await put(file.originalname, file.buffer, {
+        access: "public",
+        token: this.blobReadWriteToken,
       });
 
-      ring.image = imageSaved;
+      ring.image = blob.url;
+
+      ring.url = blob.url;
     }
 
     ring.name = name || ring.name;
@@ -159,7 +182,7 @@ export class RingService extends RingGlobalValidations {
     ring.owner = owner || ring.owner;
     ring.forgedBy = forgedBy || ring.forgedBy;
 
-    ring.url = `${this.baseUrl}/uploads/${ring.image}`;
+    // ring.url = `${this.baseUrl}/uploads/${ring.image}`;
 
     await ring.save();
 
@@ -180,7 +203,11 @@ export class RingService extends RingGlobalValidations {
 
     await ring.destroy();
 
-    await this.deleteRingImage(ring.image);
+    await del(ring.image, {
+      token: this.blobReadWriteToken,
+    });
+
+    // await this.deleteRingImage(ring.image);
 
     return null;
   }

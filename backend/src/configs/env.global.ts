@@ -1,6 +1,8 @@
 interface EnvConfig {
   nodeEnv: string;
 
+  blobReadWriteToken: string;
+
   allowedOrigin: string;
 
   database: {
@@ -23,6 +25,8 @@ interface EnvConfig {
 
 export default (): EnvConfig => ({
   nodeEnv: process.env.NODE_ENV || "development",
+
+  blobReadWriteToken: process.env.BLOB_READ_WRITE_TOKEN!,
 
   allowedOrigin: process.env.ALLOWED_ORIGIN || "http://192.168.100.3:3001",
 
