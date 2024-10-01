@@ -86,7 +86,9 @@ export class RingService extends RingGlobalValidations {
 
     // Invalidate if forgedBy is not a valid ring
     if (!this.isValidRing(forgedBy)) {
-      throw new BadRequestException(`Invalid forgedBy value: ${forgedBy}`);
+      throw new BadRequestException(
+        "Invalid 'forgedBy' value. It must be one of: 'Elfos', 'Anões', 'Homens', 'Sauron'.",
+      );
     }
 
     await this.validateRingCreation(
@@ -135,7 +137,9 @@ export class RingService extends RingGlobalValidations {
 
     // Invalidate if forgedBy is not a valid ring
     if (forgedBy && !this.isValidRing(forgedBy)) {
-      throw new BadRequestException(`Invalid forgedBy value: ${forgedBy}`);
+      throw new BadRequestException(
+        "Invalid 'forgedBy' value. It must be one of: 'Elfos', 'Anões', 'Homens', 'Sauron'.",
+      );
     }
 
     const ring = await this.ringModel.findOne({

@@ -64,7 +64,7 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
     async create(createRingDto, file, req) {
         const { name, power, owner, forgedBy } = createRingDto;
         if (!this.isValidRing(forgedBy)) {
-            throw new common_1.BadRequestException(`Invalid forgedBy value: ${forgedBy}`);
+            throw new common_1.BadRequestException("Invalid 'forgedBy' value. It must be one of: 'Elfos', 'Anões', 'Homens', 'Sauron'.");
         }
         await this.validateRingCreation(this.ringModel, createRingDto.forgedBy, req.user.sub);
         const blob = await (0, blob_1.put)(file.originalname, file.buffer, {
@@ -91,7 +91,7 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
     async update(id, updateRingDto, file, req) {
         const { name, power, owner, forgedBy } = updateRingDto;
         if (forgedBy && !this.isValidRing(forgedBy)) {
-            throw new common_1.BadRequestException(`Invalid forgedBy value: ${forgedBy}`);
+            throw new common_1.BadRequestException("Invalid 'forgedBy' value. It must be one of: 'Elfos', 'Anões', 'Homens', 'Sauron'.");
         }
         const ring = await this.ringModel.findOne({
             where: {
