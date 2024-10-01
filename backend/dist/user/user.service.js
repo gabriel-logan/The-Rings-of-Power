@@ -115,6 +115,12 @@ let UserService = UserService_1 = class UserService {
             throw new common_1.BadRequestException("Password is required");
         }
         if (newPassword) {
+            if (newPassword.length < 4) {
+                throw new common_1.BadRequestException("Password must be at least 4 characters long");
+            }
+            if (newPassword.length > 255) {
+                throw new common_1.BadRequestException("Password must be at most 255 characters long");
+            }
             if (newPassword === password) {
                 throw new common_1.BadRequestException("New password can not be the same as the old one");
             }

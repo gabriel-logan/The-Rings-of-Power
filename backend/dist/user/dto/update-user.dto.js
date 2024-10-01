@@ -18,7 +18,6 @@ class UpdateUserDto extends (0, swagger_1.PartialType)(create_user_dto_1.CreateU
 exports.UpdateUserDto = UpdateUserDto;
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(4, 255),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "newPassword", void 0);
