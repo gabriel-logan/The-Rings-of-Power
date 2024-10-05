@@ -7,6 +7,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/sequelize";
 import { put, del } from "@vercel/blob";
+import { isValidImage } from "multiform-validator";
 
 import RingGlobalValidations from "./RingGlobalValidations";
 import { CreateRingDto } from "./dto/create-ring.dto";
@@ -83,6 +84,15 @@ export class RingService extends RingGlobalValidations {
     req: ReqAuthUser,
   ): Promise<Ring> {
     const { name, power, owner, forgedBy } = createRingDto;
+
+    // Convert the image buffer to a file
+    const bufferImageData = Buffer.from(file.buffer);
+
+    if (!isValidImage(bufferImageData)) {
+      throw new BadRequestException(
+        "Validation failed (expected type is /jpeg|png/)",
+      );
+    }
 
     // Invalidate if forgedBy is not a valid ring
     if (!this.isValidRing(forgedBy)) {

@@ -18,6 +18,7 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const sequelize_1 = require("@nestjs/sequelize");
 const blob_1 = require("@vercel/blob");
+const multiform_validator_1 = require("multiform-validator");
 const RingGlobalValidations_1 = require("./RingGlobalValidations");
 const ring_entity_1 = require("./entities/ring.entity");
 let RingService = RingService_1 = class RingService extends RingGlobalValidations_1.default {
@@ -63,6 +64,10 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
     }
     async create(createRingDto, file, req) {
         const { name, power, owner, forgedBy } = createRingDto;
+        const bufferImageData = Buffer.from(file.buffer);
+        if (!(0, multiform_validator_1.isValidImage)(bufferImageData)) {
+            throw new common_1.BadRequestException("Validation failed (expected type is /jpeg|png/)");
+        }
         if (!this.isValidRing(forgedBy)) {
             throw new common_1.BadRequestException("Invalid 'forgedBy' value. It must be one of: 'Elfos', 'Anões', 'Homens', 'Sauron'.");
         }
