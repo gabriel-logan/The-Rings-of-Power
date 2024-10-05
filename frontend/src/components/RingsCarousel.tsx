@@ -45,9 +45,8 @@ export default function RingsCarousel({
           {UserRings?.map((ring) => (
             <motion.div
               key={ring.id}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
               className="relative flex w-64 flex-none flex-col justify-between rounded-lg border-2 border-yellow-600 bg-gray-700 p-4 shadow-md transition-shadow duration-300 hover:shadow-xl"
+              style={{ visibility: "visible" }} // Adicione esta linha
             >
               {isMyProfile && (
                 <div className="absolute right-2 top-2 flex flex-row items-center justify-center space-x-2">
