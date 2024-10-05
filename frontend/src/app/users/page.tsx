@@ -19,10 +19,12 @@ export default async function UsersProfilePage() {
     return 0;
   });
 
+  const tripleListTemp = [...sortedUsers, ...sortedUsers, ...sortedUsers];
+
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      {sortedUsers && sortedUsers.length > 0 ? (
-        <UsersFound sortedUsers={sortedUsers} token={token} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 p-4">
+      {tripleListTemp && tripleListTemp.length > 0 ? (
+        <UsersFound sortedUsers={tripleListTemp} token={token} />
       ) : (
         <NoUsersFound />
       )}
