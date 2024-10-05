@@ -1,4 +1,3 @@
-import { CacheInterceptor } from "@nestjs/cache-manager";
 import {
   Body,
   Controller,
@@ -10,62 +9,81 @@ import {
   Put,
   Req,
   UseGuards,
-  UseInterceptors,
   ValidationPipe,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { AuthGuard } from "src/auth/auth.guard";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { DeleteUserDto } from "./dto/delete-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
+import {
+  createApiOkResponse,
+  findAllApiOkResponse,
+  findOneApiOkResponse,
+  updateApiOkResponse,
+} from "./swagger.config";
 import { ReqAuthUser } from "./types/Req";
 import { UserService } from "./user.service";
 
 @Controller("user")
-@UseInterceptors(CacheInterceptor)
 @ApiTags("User")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @ApiOkResponse(findAllApiOkResponse)
   async findAll(): Promise<User[]> {
     return await this.userService.findAll();
   }
 
   @Get(":id")
+  @ApiOkResponse(findOneApiOkResponse)
   async findByPk(@Param("id", ParseIntPipe) id: number): Promise<User> {
     return await this.userService.findByPk(id);
   }
 
   @Post()
+  @ApiCreatedResponse(createApiOkResponse)
   async create(
     @Body(ValidationPipe) createUserDto: CreateUserDto,
   ): Promise<Pick<User, "id" | "username">> {
-    return await this.userService.create(createUserDto);
+    const user = await this.userService.create(createUserDto);
+    return user;
   }
 
   @Put(":id")
   @UseGuards(AuthGuard)
   @ApiBearerAuth("defaultBearerAuth")
+  @ApiOkResponse(updateApiOkResponse)
   async update(
     @Param("id", ParseIntPipe) id: number,
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
     @Req()
     req: ReqAuthUser,
   ): Promise<Pick<User, "id" | "username">> {
-    return await this.userService.update(id, updateUserDto, req);
+    const user = await this.userService.update(id, updateUserDto, req);
+    return user;
   }
 
   @Delete(":id")
   @UseGuards(AuthGuard)
   @ApiBearerAuth("defaultBearerAuth")
+  @ApiOkResponse({
+    description: "No body returned for response",
+  })
   async delete(
     @Param("id", ParseIntPipe) id: number,
     @Body(ValidationPipe) deleteUserDto: DeleteUserDto,
     @Req() req: ReqAuthUser,
   ): Promise<null> {
-    return await this.userService.delete(id, deleteUserDto, req);
+    const user = await this.userService.delete(id, deleteUserDto, req);
+    return user;
   }
 }
