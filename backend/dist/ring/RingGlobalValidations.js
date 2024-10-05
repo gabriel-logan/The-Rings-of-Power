@@ -59,7 +59,7 @@ class RingGlobalValidations {
         const newUniqueImageName = `${(0, uuid_1.v4)()}-${Date.now()}-${file.originalname}`;
         const filePath = (0, path_1.join)(destinationPath, newUniqueImageName);
         if (await !(0, fs_1.existsSync)(destinationPath)) {
-            await (0, fs_1.mkdirSync)(destinationPath);
+            (0, fs_1.mkdirSync)(destinationPath);
         }
         if (isUpdate) {
             await this.deleteRingImage(oldFileName);
@@ -68,14 +68,14 @@ class RingGlobalValidations {
         if (!(0, multiform_validator_1.isValidImage)(bufferImageData)) {
             throw new common_1.BadRequestException("Validation failed (expected type is /jpeg|png/)");
         }
-        await (0, fs_1.writeFileSync)(filePath, bufferImageData);
+        (0, fs_1.writeFileSync)(filePath, bufferImageData);
         return newUniqueImageName;
     }
     async deleteRingImage(imageName) {
         const destinationPath = (0, path_1.join)(process.cwd(), "uploads");
         const filePath = (0, path_1.join)(destinationPath, imageName);
         if (await (0, fs_1.existsSync)(filePath)) {
-            await (0, fs_1.unlinkSync)(filePath);
+            (0, fs_1.unlinkSync)(filePath);
         }
     }
 }

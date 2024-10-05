@@ -21,9 +21,11 @@ const auth_guard_1 = require("../auth/auth.guard");
 const create_ring_dto_1 = require("./dto/create-ring.dto");
 const update_ring_dto_1 = require("./dto/update-ring.dto");
 const ring_service_1 = require("./ring.service");
+const swagger_config_1 = require("./swagger.config");
 let RingController = class RingController {
-    constructor(ringService) {
+    constructor(ringService, cacheManager) {
         this.ringService = ringService;
+        this.cacheManager = cacheManager;
     }
     async findAll(req) {
         return await this.ringService.findAll(req);
@@ -32,18 +34,29 @@ let RingController = class RingController {
         return await this.ringService.findOne(id, req);
     }
     async create(createRingDto, file, req) {
-        return await this.ringService.create(createRingDto, file, req);
+        const ring = await this.ringService.create(createRingDto, file, req);
+        await this.cacheManager.del("rings");
+        await this.cacheManager.del("rings/:id");
+        return ring;
     }
     async update(updateRingDto, id, file, req) {
-        return await this.ringService.update(id, updateRingDto, file, req);
+        const ring = await this.ringService.update(id, updateRingDto, file, req);
+        await this.cacheManager.del("rings");
+        await this.cacheManager.del("rings/:id");
+        return ring;
     }
     async delete(id, req) {
-        return await this.ringService.delete(id, req);
+        const ring = await this.ringService.delete(id, req);
+        await this.cacheManager.del("rings");
+        await this.cacheManager.del("rings/:id");
+        return ring;
     }
 };
 exports.RingController = RingController;
 __decorate([
     (0, common_1.Get)(),
+    (0, cache_manager_1.CacheKey)("rings"),
+    (0, swagger_1.ApiOkResponse)(swagger_config_1.findAllApiOkResponse),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -51,6 +64,8 @@ __decorate([
 ], RingController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(":id"),
+    (0, cache_manager_1.CacheKey)("rings/:id"),
+    (0, swagger_1.ApiOkResponse)(swagger_config_1.findOneApiOkResponse),
     __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -61,31 +76,8 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("image")),
     (0, swagger_1.ApiConsumes)("multipart/form-data"),
-    (0, swagger_1.ApiBody)({
-        description: "Update ring with image",
-        schema: {
-            type: "object",
-            properties: {
-                name: {
-                    type: "string",
-                },
-                power: {
-                    type: "string",
-                },
-                owner: {
-                    type: "string",
-                },
-                forgedBy: {
-                    type: "string",
-                    examples: ["Elfos", "Anões", "Homens", "Sauron"],
-                },
-                image: {
-                    type: "imageFile",
-                    format: "binary",
-                },
-            },
-        },
-    }),
+    (0, swagger_1.ApiBody)(swagger_config_1.createApiBody),
+    (0, swagger_1.ApiCreatedResponse)(swagger_config_1.createApiOkResponse),
     __param(0, (0, common_1.Body)(common_1.ValidationPipe)),
     __param(1, (0, common_1.UploadedFile)(new common_1.ParseFilePipeBuilder()
         .addFileTypeValidator({
@@ -104,31 +96,8 @@ __decorate([
     (0, common_1.Put)(":id"),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("image")),
     (0, swagger_1.ApiConsumes)("multipart/form-data"),
-    (0, swagger_1.ApiBody)({
-        description: "Update ring with image",
-        schema: {
-            type: "object",
-            properties: {
-                name: {
-                    type: "string",
-                },
-                power: {
-                    type: "string",
-                },
-                owner: {
-                    type: "string",
-                },
-                forgedBy: {
-                    type: "string",
-                    examples: ["Elfos", "Anões", "Homens", "Sauron"],
-                },
-                image: {
-                    type: "imageFile",
-                    format: "binary",
-                },
-            },
-        },
-    }),
+    (0, swagger_1.ApiBody)(swagger_config_1.updateApiBody),
+    (0, swagger_1.ApiOkResponse)(swagger_config_1.updateApiOkResponse),
     __param(0, (0, common_1.Body)(common_1.ValidationPipe)),
     __param(1, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __param(2, (0, common_1.UploadedFile)(new common_1.ParseFilePipeBuilder()
@@ -146,6 +115,9 @@ __decorate([
 ], RingController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(":id"),
+    (0, swagger_1.ApiOkResponse)({
+        description: "No body returned for response",
+    }),
     __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -155,9 +127,11 @@ __decorate([
 exports.RingController = RingController = __decorate([
     (0, common_1.Controller)("ring"),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
     (0, swagger_1.ApiTags)("Ring"),
     (0, swagger_1.ApiBearerAuth)("defaultBearerAuth"),
-    __metadata("design:paramtypes", [ring_service_1.RingService])
+    (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
+    __param(1, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
+    __metadata("design:paramtypes", [ring_service_1.RingService,
+        cache_manager_1.Cache])
 ], RingController);
 //# sourceMappingURL=ring.controller.js.map

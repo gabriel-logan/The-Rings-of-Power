@@ -20,6 +20,7 @@ let AppController = class AppController {
 exports.AppController = AppController;
 __decorate([
     (0, common_1.Get)(),
+    (0, swagger_1.ApiResponse)({ status: 200, description: "Pong!" }),
     (0, swagger_1.ApiOperation)({ summary: "Ping!" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),

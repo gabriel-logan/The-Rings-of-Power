@@ -15,7 +15,7 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const ring_entity_1 = require("../../ring/entities/ring.entity");
 let User = class User extends sequelize_typescript_1.Model {
     static async hashPassword(instance) {
-        const newPassword = await bcrypt.hashSync(instance.password, 8);
+        const newPassword = await bcrypt.hash(instance.password, 8);
         instance.passwordHash = newPassword;
     }
     async passwordIsValid(password) {
