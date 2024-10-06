@@ -18,10 +18,11 @@ const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const swagger_1 = require("@nestjs/swagger");
 const auth_guard_1 = require("../auth/auth.guard");
+const swagger_config_1 = require("../swagger.config");
 const create_ring_dto_1 = require("./dto/create-ring.dto");
 const update_ring_dto_1 = require("./dto/update-ring.dto");
 const ring_service_1 = require("./ring.service");
-const swagger_config_1 = require("./swagger.config");
+const swagger_config_2 = require("./swagger.config");
 let RingController = class RingController {
     constructor(ringService, cacheManager) {
         this.ringService = ringService;
@@ -54,7 +55,8 @@ __decorate([
     (0, common_1.Get)(),
     (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
     (0, cache_manager_1.CacheKey)("rings"),
-    (0, swagger_1.ApiOkResponse)(swagger_config_1.findAllApiOkResponse),
+    (0, swagger_1.ApiOkResponse)(swagger_config_2.findAllApiOkResponse),
+    (0, swagger_1.ApiResponse)(swagger_config_1.errorResponsePatternStructure),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -62,7 +64,8 @@ __decorate([
 ], RingController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(":id"),
-    (0, swagger_1.ApiOkResponse)(swagger_config_1.findOneApiOkResponse),
+    (0, swagger_1.ApiOkResponse)(swagger_config_2.findOneApiOkResponse),
+    (0, swagger_1.ApiResponse)(swagger_config_1.errorResponsePatternStructure),
     __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -73,8 +76,9 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("image")),
     (0, swagger_1.ApiConsumes)("multipart/form-data"),
-    (0, swagger_1.ApiBody)(swagger_config_1.createApiBody),
-    (0, swagger_1.ApiCreatedResponse)(swagger_config_1.createApiOkResponse),
+    (0, swagger_1.ApiBody)(swagger_config_2.createApiBody),
+    (0, swagger_1.ApiCreatedResponse)(swagger_config_2.createApiOkResponse),
+    (0, swagger_1.ApiResponse)(swagger_config_1.errorResponsePatternStructure),
     __param(0, (0, common_1.Body)(common_1.ValidationPipe)),
     __param(1, (0, common_1.UploadedFile)(new common_1.ParseFilePipeBuilder()
         .addFileTypeValidator({
@@ -93,8 +97,9 @@ __decorate([
     (0, common_1.Put)(":id"),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("image")),
     (0, swagger_1.ApiConsumes)("multipart/form-data"),
-    (0, swagger_1.ApiBody)(swagger_config_1.updateApiBody),
-    (0, swagger_1.ApiOkResponse)(swagger_config_1.updateApiOkResponse),
+    (0, swagger_1.ApiBody)(swagger_config_2.updateApiBody),
+    (0, swagger_1.ApiOkResponse)(swagger_config_2.updateApiOkResponse),
+    (0, swagger_1.ApiResponse)(swagger_config_1.errorResponsePatternStructure),
     __param(0, (0, common_1.Body)(common_1.ValidationPipe)),
     __param(1, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __param(2, (0, common_1.UploadedFile)(new common_1.ParseFilePipeBuilder()
@@ -115,6 +120,7 @@ __decorate([
     (0, swagger_1.ApiOkResponse)({
         description: "No body returned for response",
     }),
+    (0, swagger_1.ApiResponse)(swagger_config_1.errorResponsePatternStructure),
     __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),

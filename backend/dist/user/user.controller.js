@@ -16,10 +16,11 @@ exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const auth_guard_1 = require("../auth/auth.guard");
+const swagger_config_1 = require("../swagger.config");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const delete_user_dto_1 = require("./dto/delete-user.dto");
 const update_user_dto_1 = require("./dto/update-user.dto");
-const swagger_config_1 = require("./swagger.config");
+const swagger_config_2 = require("./swagger.config");
 const user_service_1 = require("./user.service");
 let UserController = class UserController {
     constructor(userService) {
@@ -47,14 +48,15 @@ let UserController = class UserController {
 exports.UserController = UserController;
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOkResponse)(swagger_config_1.findAllApiOkResponse),
+    (0, swagger_1.ApiOkResponse)(swagger_config_2.findAllApiOkResponse),
+    (0, swagger_1.ApiResponse)(swagger_config_1.errorResponsePatternStructure),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(":id"),
-    (0, swagger_1.ApiOkResponse)(swagger_config_1.findOneApiOkResponse),
+    (0, swagger_1.ApiOkResponse)(swagger_config_2.findOneApiOkResponse),
     __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -62,7 +64,8 @@ __decorate([
 ], UserController.prototype, "findByPk", null);
 __decorate([
     (0, common_1.Post)(),
-    (0, swagger_1.ApiCreatedResponse)(swagger_config_1.createApiOkResponse),
+    (0, swagger_1.ApiCreatedResponse)(swagger_config_2.createApiOkResponse),
+    (0, swagger_1.ApiResponse)(swagger_config_1.errorResponsePatternStructure),
     __param(0, (0, common_1.Body)(common_1.ValidationPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
@@ -72,7 +75,8 @@ __decorate([
     (0, common_1.Put)(":id"),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, swagger_1.ApiBearerAuth)("defaultBearerAuth"),
-    (0, swagger_1.ApiOkResponse)(swagger_config_1.updateApiOkResponse),
+    (0, swagger_1.ApiOkResponse)(swagger_config_2.updateApiOkResponse),
+    (0, swagger_1.ApiResponse)(swagger_config_1.errorResponsePatternStructure),
     __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)(common_1.ValidationPipe)),
     __param(2, (0, common_1.Req)()),
@@ -87,6 +91,7 @@ __decorate([
     (0, swagger_1.ApiOkResponse)({
         description: "No body returned for response",
     }),
+    (0, swagger_1.ApiResponse)(swagger_config_1.errorResponsePatternStructure),
     __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)(common_1.ValidationPipe)),
     __param(2, (0, common_1.Req)()),
