@@ -66,6 +66,7 @@ export default function RootLayout({
   return (
     <SessionProviderWrapper>
       <html lang="en">
+        <meta name="mobile-web-app-capable" content="yes" />
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
