@@ -36,25 +36,23 @@ let RingController = class RingController {
     async create(createRingDto, file, req) {
         const ring = await this.ringService.create(createRingDto, file, req);
         await this.cacheManager.del("rings");
-        await this.cacheManager.del("rings/:id");
         return ring;
     }
     async update(updateRingDto, id, file, req) {
         const ring = await this.ringService.update(id, updateRingDto, file, req);
         await this.cacheManager.del("rings");
-        await this.cacheManager.del("rings/:id");
         return ring;
     }
     async delete(id, req) {
         const ring = await this.ringService.delete(id, req);
         await this.cacheManager.del("rings");
-        await this.cacheManager.del("rings/:id");
         return ring;
     }
 };
 exports.RingController = RingController;
 __decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
     (0, cache_manager_1.CacheKey)("rings"),
     (0, swagger_1.ApiOkResponse)(swagger_config_1.findAllApiOkResponse),
     __param(0, (0, common_1.Req)()),
@@ -64,7 +62,6 @@ __decorate([
 ], RingController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(":id"),
-    (0, cache_manager_1.CacheKey)("rings/:id"),
     (0, swagger_1.ApiOkResponse)(swagger_config_1.findOneApiOkResponse),
     __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __param(1, (0, common_1.Req)()),
@@ -129,7 +126,6 @@ exports.RingController = RingController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, swagger_1.ApiTags)("Ring"),
     (0, swagger_1.ApiBearerAuth)("defaultBearerAuth"),
-    (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
     __param(1, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
     __metadata("design:paramtypes", [ring_service_1.RingService,
         cache_manager_1.Cache])
