@@ -69,7 +69,7 @@ const sequelizeAsyncConfig: SequelizeModuleAsyncOptions = {
       },
 
       sync: {
-        force: true,
+        force: false,
       },
     };
   },
