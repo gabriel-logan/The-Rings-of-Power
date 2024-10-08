@@ -10,6 +10,7 @@ import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/sequelize";
 import { put, del } from "@vercel/blob";
 import { isValidImage } from "multiform-validator";
+import * as sharp from "sharp";
 
 import RingGlobalValidations from "./RingGlobalValidations";
 import { CreateRingDto } from "./dto/create-ring.dto";
@@ -108,14 +109,8 @@ export class RingService extends RingGlobalValidations {
   ): Promise<Ring> {
     const { name, power, owner, forgedBy } = createRingDto;
 
-    // Convert the image buffer to a file
-    const bufferImageData = Buffer.from(file.buffer);
-
-    if (!isValidImage(bufferImageData)) {
-      throw new BadRequestException(
-        "Validation failed (expected type is /jpeg|png/)",
-      );
-    }
+    // Validate image
+    await this.validateImage(file.buffer);
 
     // Invalidate if forgedBy is not a valid ring
     if (!this.isValidRing(forgedBy)) {
@@ -208,6 +203,9 @@ export class RingService extends RingGlobalValidations {
       });
       */
 
+      // Validate image
+      await this.validateImage(file.buffer);
+
       const blob = await put(file.originalname, file.buffer, {
         access: "public",
         token: this.blobReadWriteToken,
@@ -248,11 +246,11 @@ export class RingService extends RingGlobalValidations {
       throw new NotFoundException(`Ring with id ${id} not found`);
     }
 
-    await ring.destroy();
-
     await del(ring.image, {
       token: this.blobReadWriteToken,
     });
+
+    await ring.destroy();
 
     // await this.deleteRingImage(ring.image);
 
@@ -263,5 +261,27 @@ export class RingService extends RingGlobalValidations {
     await this.cacheManager.del(ringsCacheKey);
 
     return null;
+  }
+
+  private async validateImage(
+    buffer: Express.Multer.File["buffer"],
+  ): Promise<void> {
+    try {
+      if (
+        !isValidImage(buffer, {
+          exclude: ["gif", "ico"],
+        })
+      ) {
+        throw new BadRequestException(
+          "Validation failed (expected type is /jpeg|png/)",
+        );
+      }
+
+      await sharp(buffer).metadata();
+    } catch {
+      throw new BadRequestException(
+        "Validation failed (expected type is /jpeg|png/)",
+      );
+    }
   }
 }

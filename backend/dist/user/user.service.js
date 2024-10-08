@@ -17,6 +17,7 @@ exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const sequelize_1 = require("@nestjs/sequelize");
+const blob_1 = require("@vercel/blob");
 const ring_entity_1 = require("../ring/entities/ring.entity");
 const user_entity_1 = require("./entities/user.entity");
 let UserService = UserService_1 = class UserService {
@@ -154,6 +155,11 @@ let UserService = UserService_1 = class UserService {
         if (!(await user.passwordIsValid(password))) {
             throw new common_1.BadRequestException("Invalid password");
         }
+        user.rings.forEach(async (ring) => {
+            await (0, blob_1.del)(ring.image, {
+                token: this.blobReadWriteToken,
+            });
+        });
         await user.destroy();
         return null;
     }

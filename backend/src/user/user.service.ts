@@ -6,6 +6,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/sequelize";
+import { del } from "@vercel/blob";
 import { Ring } from "src/ring/entities/ring.entity";
 
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -209,6 +210,13 @@ export class UserService {
     if (!(await user.passwordIsValid(password))) {
       throw new BadRequestException("Invalid password");
     }
+
+    // Delete all rings images when deleting user
+    user.rings.forEach(async (ring) => {
+      await del(ring.image, {
+        token: this.blobReadWriteToken,
+      });
+    });
 
     await user.destroy();
 
