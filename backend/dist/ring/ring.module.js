@@ -25,7 +25,7 @@ exports.RingModule = RingModule = __decorate([
             config_1.ConfigModule,
             jwt_1.JwtModule,
             cache_manager_1.CacheModule.register({
-                ttl: 60000 * 2,
+                ttl: 60000 * 0.5,
             }),
         ],
         controllers: [ring_controller_1.RingController],

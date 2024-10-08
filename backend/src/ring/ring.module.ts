@@ -14,7 +14,7 @@ import { RingService } from "./ring.service";
     ConfigModule,
     JwtModule,
     CacheModule.register({
-      ttl: 60000 * 2, // 2 minutes
+      ttl: 60000 * 0.5, // 0.5 minutes
     }),
   ],
   controllers: [RingController],
