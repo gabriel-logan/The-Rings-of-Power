@@ -176,6 +176,11 @@ export class RingService extends RingGlobalValidations {
 
       await this.validateImageType(file.buffer);
 
+      // Delete the old image
+      await del(ring.image, {
+        token: this.blobReadWriteToken,
+      });
+
       const blob = await put(file.originalname, file.buffer, {
         access: "public",
         token: this.blobReadWriteToken,

@@ -113,6 +113,9 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
         }
         if (file) {
             await this.validateImageType(file.buffer);
+            await (0, blob_1.del)(ring.image, {
+                token: this.blobReadWriteToken,
+            });
             const blob = await (0, blob_1.put)(file.originalname, file.buffer, {
                 access: "public",
                 token: this.blobReadWriteToken,
