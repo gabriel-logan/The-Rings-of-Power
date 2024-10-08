@@ -201,7 +201,14 @@ export class UserService {
       throw new BadRequestException("You can not delete this user");
     }
 
-    const user = await this.userModel.findByPk(id);
+    const user = await this.userModel.findByPk(id, {
+      include: [
+        {
+          model: Ring,
+          attributes: ["id", "image"],
+        },
+      ],
+    });
 
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);

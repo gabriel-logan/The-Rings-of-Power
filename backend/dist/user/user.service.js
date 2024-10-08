@@ -148,7 +148,14 @@ let UserService = UserService_1 = class UserService {
         if (sub !== id) {
             throw new common_1.BadRequestException("You can not delete this user");
         }
-        const user = await this.userModel.findByPk(id);
+        const user = await this.userModel.findByPk(id, {
+            include: [
+                {
+                    model: ring_entity_1.Ring,
+                    attributes: ["id", "image"],
+                },
+            ],
+        });
         if (!user) {
             throw new common_1.NotFoundException(`User with id ${id} not found`);
         }

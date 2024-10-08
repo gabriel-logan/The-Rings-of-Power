@@ -19,7 +19,8 @@ let User = class User extends sequelize_typescript_1.Model {
         instance.passwordHash = newPassword;
     }
     async passwordIsValid(password) {
-        return await bcrypt.compareSync(password, this.passwordHash);
+        const compare = await bcrypt.compare(password, this.passwordHash);
+        return compare;
     }
 };
 exports.User = User;
