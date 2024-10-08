@@ -53,8 +53,7 @@ const sequelizeAsyncConfig = {
                 return false;
             },
             sync: {
-                force: true,
-                alter: true,
+                force: false,
             },
         };
     },
