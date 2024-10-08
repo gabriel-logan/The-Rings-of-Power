@@ -41,6 +41,7 @@ export class User extends Model {
   @HasMany(() => Ring, {
     foreignKey: "userId",
     onDelete: "CASCADE",
+    onUpdate: "CASCADE",
   })
   public rings!: Ring[];
 }
