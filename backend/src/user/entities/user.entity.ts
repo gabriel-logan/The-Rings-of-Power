@@ -13,13 +13,10 @@ import { Ring } from "src/ring/entities/ring.entity";
 export class User extends Model {
   @Column({
     unique: true,
-    allowNull: false,
   })
   public username!: string;
 
-  @Column({
-    allowNull: false,
-  })
+  @Column
   public passwordHash!: string;
 
   @Column({

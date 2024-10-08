@@ -74,7 +74,8 @@ let UserService = UserService_1 = class UserService {
         try {
             newUser = await this.userModel.create({ username, password });
         }
-        catch {
+        catch (error) {
+            this.logger.error(error);
             throw new common_1.BadRequestException("Username already exists");
         }
         return {

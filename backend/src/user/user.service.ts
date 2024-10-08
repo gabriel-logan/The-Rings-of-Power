@@ -86,7 +86,8 @@ export class UserService {
 
     try {
       newUser = await this.userModel.create({ username, password });
-    } catch {
+    } catch (error) {
+      this.logger.error(error);
       throw new BadRequestException("Username already exists");
     }
 

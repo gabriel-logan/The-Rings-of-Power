@@ -15,33 +15,23 @@ let Ring = class Ring extends sequelize_typescript_1.Model {
 };
 exports.Ring = Ring;
 __decorate([
-    (0, sequelize_typescript_1.Column)({
-        allowNull: false,
-    }),
+    sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], Ring.prototype, "name", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({
-        allowNull: false,
-    }),
+    sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], Ring.prototype, "power", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({
-        allowNull: false,
-    }),
+    sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], Ring.prototype, "owner", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({
-        allowNull: false,
-    }),
+    sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], Ring.prototype, "forgedBy", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({
-        allowNull: false,
-    }),
+    sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], Ring.prototype, "image", void 0);
 __decorate([

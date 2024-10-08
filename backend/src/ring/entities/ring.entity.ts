@@ -2,29 +2,19 @@ import { Column, DataType, Model, Table } from "sequelize-typescript";
 
 @Table
 export class Ring extends Model {
-  @Column({
-    allowNull: false,
-  })
+  @Column
   public name!: string;
 
-  @Column({
-    allowNull: false,
-  })
+  @Column
   public power!: string;
 
-  @Column({
-    allowNull: false,
-  })
+  @Column
   public owner!: string;
 
-  @Column({
-    allowNull: false,
-  })
+  @Column
   public forgedBy!: string;
 
-  @Column({
-    allowNull: false,
-  })
+  @Column
   public image!: string;
 
   @Column({

@@ -27,14 +27,11 @@ exports.User = User;
 __decorate([
     (0, sequelize_typescript_1.Column)({
         unique: true,
-        allowNull: false,
     }),
     __metadata("design:type", String)
 ], User.prototype, "username", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({
-        allowNull: false,
-    }),
+    sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], User.prototype, "passwordHash", void 0);
 __decorate([
