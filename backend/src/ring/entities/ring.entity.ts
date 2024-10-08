@@ -1,4 +1,11 @@
-import { Column, DataType, Model, Table } from "sequelize-typescript";
+import {
+  Column,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+} from "sequelize-typescript";
+import { User } from "src/user/entities/user.entity";
 
 @Table
 export class Ring extends Model {
@@ -20,6 +27,7 @@ export class Ring extends Model {
   @Column({ type: DataType.VIRTUAL })
   public url!: string;
 
+  @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER,
     onDelete: "CASCADE",
