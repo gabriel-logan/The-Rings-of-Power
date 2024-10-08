@@ -45,7 +45,12 @@ __decorate([
     __metadata("design:type", String)
 ], Ring.prototype, "image", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.VIRTUAL }),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.VIRTUAL,
+        get() {
+            return this.getDataValue("image");
+        },
+    }),
     __metadata("design:type", String)
 ], Ring.prototype, "url", void 0);
 exports.Ring = Ring = __decorate([

@@ -1,6 +1,5 @@
 interface EnvConfig {
     nodeEnv: string;
-    blobReadWriteToken: string;
     allowedOrigin: string;
     database: {
         dialect: string;
@@ -12,6 +11,7 @@ interface EnvConfig {
     };
     host: string;
     port: number;
+    imagesUrl: string;
     token: {
         secret?: string;
         expiration: string;

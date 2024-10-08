@@ -47,13 +47,13 @@ const sequelizeAsyncConfig = {
                 underscored: true,
             },
             logging: (sql) => {
-                if (configService.get("nodeEnv") === "development") {
+                if (nodeEnv === "development") {
                     return logger.debug(sql);
                 }
                 return false;
             },
             sync: {
-                force: false,
+                force: true,
             },
         };
     },

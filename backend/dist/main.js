@@ -18,9 +18,11 @@ async function bootstrap() {
     app.enableCors({
         origin: nodeEnv !== "development" ? allowedOrigin : "*",
     });
-    app.use((0, helmet_1.default)({
-        crossOriginResourcePolicy: { policy: "cross-origin" },
-    }));
+    if (nodeEnv !== "development" || host === "http://localhost") {
+        app.use((0, helmet_1.default)({
+            crossOriginResourcePolicy: { policy: "cross-origin" },
+        }));
+    }
     const config = new swagger_1.DocumentBuilder()
         .setTitle("Junior-Challenge")
         .setDescription("Junior-Challenge API")

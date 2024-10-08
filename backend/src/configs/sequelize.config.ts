@@ -62,14 +62,14 @@ const sequelizeAsyncConfig: SequelizeModuleAsyncOptions = {
       },
 
       logging: (sql): false | void => {
-        if (configService.get("nodeEnv") === "development") {
+        if (nodeEnv === "development") {
           return logger.debug(sql);
         }
         return false;
       },
 
       sync: {
-        force: false,
+        force: true,
       },
     };
   },

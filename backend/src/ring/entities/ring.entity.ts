@@ -27,6 +27,11 @@ export class Ring extends Model {
   })
   public image!: string;
 
-  @Column({ type: DataType.VIRTUAL })
+  @Column({
+    type: DataType.VIRTUAL,
+    get() {
+      return this.getDataValue("image");
+    },
+  })
   public url!: string;
 }

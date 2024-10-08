@@ -8,9 +8,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/sequelize";
-import { put, del } from "@vercel/blob";
-import { isValidImage } from "multiform-validator";
-import * as sharp from "sharp";
+import { del, put } from "@vercel/blob";
 
 import RingGlobalValidations from "./RingGlobalValidations";
 import { CreateRingDto } from "./dto/create-ring.dto";
@@ -22,11 +20,8 @@ import { ReqAuthUser } from "./types/Req";
 export class RingService extends RingGlobalValidations {
   private readonly logger = new Logger(RingService.name);
 
-  private readonly host: string;
-  private readonly port: string;
-  private readonly nodeEnv: string;
-  private readonly baseUrl: string;
-  private readonly blobReadWriteToken: string;
+  private readonly blobReadWriteToken =
+    this.configService.get<string>("blobReadWriteToken");
 
   constructor(
     @InjectModel(Ring)
@@ -35,13 +30,6 @@ export class RingService extends RingGlobalValidations {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {
     super();
-    this.host = this.configService.get<string>("host")!;
-    this.port = this.configService.get<string>("port")!;
-    this.nodeEnv = this.configService.get<string>("nodeEnv")!;
-    this.baseUrl =
-      this.nodeEnv === "development" ? `${this.host}:${this.port}` : this.host;
-    this.blobReadWriteToken =
-      this.configService.get<string>("blobReadWriteToken")!;
   }
 
   async findAll(req: ReqAuthUser): Promise<Ring[]> {
@@ -62,11 +50,6 @@ export class RingService extends RingGlobalValidations {
     if (!rings.length) {
       throw new NotFoundException("No rings found");
     }
-
-    rings.forEach((ring) => {
-      // ring.url = `${this.baseUrl}/uploads/${ring.image}`;
-      ring.url = ring.image;
-    });
 
     await this.cacheManager.set(cacheKey, rings);
 
@@ -93,10 +76,6 @@ export class RingService extends RingGlobalValidations {
       throw new NotFoundException(`Ring with id ${id} not found`);
     }
 
-    // ring.url = `${this.baseUrl}/uploads/${ring.image}`;
-
-    ring.url = ring.image;
-
     await this.cacheManager.set(cacheKey, ring);
 
     return ring;
@@ -109,16 +88,15 @@ export class RingService extends RingGlobalValidations {
   ): Promise<Ring> {
     const { name, power, owner, forgedBy } = createRingDto;
 
-    // Validate image
-    await this.validateImage(file.buffer);
+    // Validate image type
+    await this.validateImageType(file.buffer);
 
     // Invalidate if forgedBy is not a valid ring
     if (!this.isValidRing(forgedBy)) {
-      throw new BadRequestException(
-        "Invalid 'forgedBy' value. It must be one of: 'Elfos', 'Anões', 'Homens', 'Sauron'.",
-      );
+      throw new BadRequestException(`Invalid forgedBy value: ${forgedBy}`);
     }
 
+    // Validate ring creation
     await this.validateRingCreation(
       this.ringModel,
       createRingDto.forgedBy,
@@ -130,8 +108,8 @@ export class RingService extends RingGlobalValidations {
       token: this.blobReadWriteToken,
     });
 
-    // Save or update ring image
-    // const imageSaved = await this.saveOrUpdateRingImage(file);
+    // Generate a new unique image name
+    // const newImageName = this.generateNewUniqueImageName(file.originalname);
 
     let newRing: Ring;
 
@@ -144,13 +122,12 @@ export class RingService extends RingGlobalValidations {
         image: blob.url,
         userId: req.user.sub,
       });
+
+      // Save or update ring image
+      // await this.saveRingImage(file.buffer, newImageName);
     } catch {
       throw new BadRequestException("Error creating ring");
     }
-
-    // newRing.url = `${this.baseUrl}/uploads/${newRing.image}`;
-
-    newRing.url = blob.url;
 
     // Invalidate cache
     const cacheKey = `rings_user_${req.user.sub}`;
@@ -169,9 +146,7 @@ export class RingService extends RingGlobalValidations {
 
     // Invalidate if forgedBy is not a valid ring
     if (forgedBy && !this.isValidRing(forgedBy)) {
-      throw new BadRequestException(
-        "Invalid 'forgedBy' value. It must be one of: 'Elfos', 'Anões', 'Homens', 'Sauron'.",
-      );
+      throw new BadRequestException(`Invalid forgedBy value: ${forgedBy}`);
     }
 
     const ring = await this.ringModel.findOne({
@@ -186,6 +161,7 @@ export class RingService extends RingGlobalValidations {
     }
 
     if (updateRingDto.forgedBy) {
+      // Validate ring creation
       await this.validateRingCreation(
         this.ringModel,
         updateRingDto.forgedBy,
@@ -196,15 +172,9 @@ export class RingService extends RingGlobalValidations {
 
     // Save or update ring image
     if (file) {
-      /**
-      const imageSaved = await this.saveOrUpdateRingImage(file, {
-          isUpdate: true,
-          oldFileName: ring.image,
-      });
-      */
+      // const imageSaved = await this.updateRingImage(file, ring.image);
 
-      // Validate image
-      await this.validateImage(file.buffer);
+      await this.validateImageType(file.buffer);
 
       const blob = await put(file.originalname, file.buffer, {
         access: "public",
@@ -212,16 +182,12 @@ export class RingService extends RingGlobalValidations {
       });
 
       ring.image = blob.url;
-
-      ring.url = blob.url;
     }
 
     ring.name = name || ring.name; // nosonar
     ring.power = power || ring.power; // nosonar
     ring.owner = owner || ring.owner; // nosonar
     ring.forgedBy = forgedBy || ring.forgedBy; // nosonar
-
-    // ring.url = `${this.baseUrl}/uploads/${ring.image}`;
 
     await ring.save();
 
@@ -258,9 +224,9 @@ export class RingService extends RingGlobalValidations {
       throw new BadRequestException(`Failed to delete image for ring`);
     }
 
-    await ring.destroy();
-
     // await this.deleteRingImage(ring.image);
+
+    await ring.destroy();
 
     // Invalidate the cache for the deleted ring
     const ringCacheKey = `ring_${id}_user_${req.user.sub}`;
@@ -269,27 +235,5 @@ export class RingService extends RingGlobalValidations {
     await this.cacheManager.del(ringsCacheKey);
 
     return null;
-  }
-
-  private async validateImage(
-    buffer: Express.Multer.File["buffer"],
-  ): Promise<void> {
-    try {
-      if (
-        !isValidImage(buffer, {
-          exclude: ["gif", "ico"],
-        })
-      ) {
-        throw new BadRequestException(
-          "Validation failed (expected type is /jpeg|png/)",
-        );
-      }
-
-      await sharp(buffer).metadata();
-    } catch {
-      throw new BadRequestException(
-        "Validation failed (expected type is /jpeg|png/)",
-      );
-    }
   }
 }

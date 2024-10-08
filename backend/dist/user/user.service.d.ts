@@ -10,10 +10,6 @@ export declare class UserService {
     private readonly logger;
     private readonly atributesToShow;
     private readonly includeAtributes;
-    private readonly host;
-    private readonly port;
-    private readonly nodeEnv;
-    readonly baseUrl: string;
     private readonly blobReadWriteToken;
     constructor(userModel: typeof User, configService: ConfigService);
     findAll(): Promise<User[]>;
@@ -22,4 +18,8 @@ export declare class UserService {
     create(user: CreateUserDto): Promise<Pick<User, "id" | "username">>;
     update(id: number, user: UpdateUserDto, req: ReqAuthUser): Promise<Pick<User, "id" | "username">>;
     delete(id: number, deleteUserDto: DeleteUserDto, req: ReqAuthUser): Promise<null>;
+    private deleteRingImage;
+    private validatePassword;
+    private validateNewPassword;
+    private validateUpdateOrDeleteUser;
 }

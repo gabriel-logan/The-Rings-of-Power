@@ -48,6 +48,7 @@ export class UserController {
 
   @Get(":id")
   @ApiOkResponse(findOneApiOkResponse)
+  @ApiResponse(errorResponsePatternStructure)
   async findByPk(@Param("id", ParseIntPipe) id: number): Promise<User> {
     return await this.userService.findByPk(id);
   }

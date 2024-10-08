@@ -18,6 +18,8 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const sequelize_1 = require("@nestjs/sequelize");
 const blob_1 = require("@vercel/blob");
+const fs_1 = require("fs");
+const path_1 = require("path");
 const ring_entity_1 = require("../ring/entities/ring.entity");
 const user_entity_1 = require("./entities/user.entity");
 let UserService = UserService_1 = class UserService {
@@ -29,16 +31,10 @@ let UserService = UserService_1 = class UserService {
         this.includeAtributes = [
             {
                 model: ring_entity_1.Ring,
-                attributes: ["id", "name", "power", "owner", "forgedBy", "image"],
+                attributes: ["id", "name", "power", "owner", "forgedBy", "image", "url"],
             },
         ];
-        this.host = this.configService.get("host");
-        this.port = this.configService.get("port");
-        this.nodeEnv = this.configService.get("nodeEnv");
-        this.baseUrl =
-            this.nodeEnv === "development" ? `${this.host}:${this.port}` : this.host;
-        this.blobReadWriteToken =
-            this.configService.get("blobReadWriteToken");
+        this.blobReadWriteToken = this.configService.get("blobReadWriteToken");
     }
     async findAll() {
         const users = await this.userModel.findAll({
@@ -48,11 +44,6 @@ let UserService = UserService_1 = class UserService {
         if (users.length === 0) {
             throw new common_1.NotFoundException("No users found");
         }
-        users.forEach((user) => {
-            user.rings.forEach((ring) => {
-                ring.url = ring.image;
-            });
-        });
         return users;
     }
     async findByPk(id) {
@@ -64,9 +55,6 @@ let UserService = UserService_1 = class UserService {
         if (!user) {
             throw new common_1.NotFoundException(`User with id ${id} not found`);
         }
-        user.rings.forEach((ring) => {
-            ring.url = ring.image;
-        });
         return user;
     }
     async findOne(username) {
@@ -78,9 +66,6 @@ let UserService = UserService_1 = class UserService {
         if (!user) {
             throw new common_1.NotFoundException(`User with username ${username} not found`);
         }
-        user.rings.forEach((ring) => {
-            ring.url = ring.image;
-        });
         return user;
     }
     async create(user) {
@@ -100,31 +85,23 @@ let UserService = UserService_1 = class UserService {
     async update(id, user, req) {
         const { username, password, newPassword } = user;
         const { sub } = req.user;
-        if (sub !== id) {
-            throw new common_1.BadRequestException("You can not update this user");
-        }
+        this.validateUpdateOrDeleteUser({
+            id,
+            sub,
+            msg: "You can not update this user",
+        });
         const userToUpdate = await this.userModel.findByPk(id);
         if (!userToUpdate) {
             throw new common_1.NotFoundException(`User with id ${id} not found`);
         }
         if (password) {
-            if (!(await userToUpdate.passwordIsValid(password))) {
-                throw new common_1.BadRequestException("Invalid password");
-            }
+            await this.validatePassword(userToUpdate, password);
         }
         else {
             throw new common_1.BadRequestException("Password is required");
         }
         if (newPassword) {
-            if (newPassword.length < 4) {
-                throw new common_1.BadRequestException("Password must be at least 4 characters long");
-            }
-            if (newPassword.length > 255) {
-                throw new common_1.BadRequestException("Password must be at most 255 characters long");
-            }
-            if (newPassword === password) {
-                throw new common_1.BadRequestException("New password can not be the same as the old one");
-            }
+            this.validateNewPassword(newPassword, password);
             userToUpdate.password = newPassword;
         }
         else {
@@ -145,9 +122,11 @@ let UserService = UserService_1 = class UserService {
     async delete(id, deleteUserDto, req) {
         const { password } = deleteUserDto;
         const { sub } = req.user;
-        if (sub !== id) {
-            throw new common_1.BadRequestException("You can not delete this user");
-        }
+        this.validateUpdateOrDeleteUser({
+            id,
+            sub,
+            msg: "You can not delete this user",
+        });
         const user = await this.userModel.findByPk(id, {
             include: [
                 {
@@ -159,9 +138,7 @@ let UserService = UserService_1 = class UserService {
         if (!user) {
             throw new common_1.NotFoundException(`User with id ${id} not found`);
         }
-        if (!(await user.passwordIsValid(password))) {
-            throw new common_1.BadRequestException("Invalid password");
-        }
+        await this.validatePassword(user, password);
         const deleteImagePromises = user.rings.map(async (ring) => {
             try {
                 await (0, blob_1.del)(ring.image, {
@@ -175,6 +152,34 @@ let UserService = UserService_1 = class UserService {
         await Promise.all(deleteImagePromises);
         await user.destroy();
         return null;
+    }
+    async deleteRingImage(imageName) {
+        const destinationPath = (0, path_1.join)(process.cwd(), "uploads");
+        const filePath = (0, path_1.join)(destinationPath, imageName);
+        if (await (0, fs_1.existsSync)(filePath)) {
+            (0, fs_1.unlinkSync)(filePath);
+        }
+    }
+    async validatePassword(user, password) {
+        if (!(await user.passwordIsValid(password))) {
+            throw new common_1.BadRequestException("Invalid password");
+        }
+    }
+    validateNewPassword(newPassword, oldPassword) {
+        if (newPassword.length < 4) {
+            throw new common_1.BadRequestException("Password must be at least 4 characters long");
+        }
+        if (newPassword.length > 255) {
+            throw new common_1.BadRequestException("Password must be at most 255 characters long");
+        }
+        if (newPassword === oldPassword) {
+            throw new common_1.BadRequestException("New password can not be the same as the old one");
+        }
+    }
+    validateUpdateOrDeleteUser({ id, sub, msg, }) {
+        if (sub !== id) {
+            throw new common_1.BadRequestException(msg);
+        }
     }
 };
 exports.UserService = UserService;

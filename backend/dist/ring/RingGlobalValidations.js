@@ -4,8 +4,12 @@ const common_1 = require("@nestjs/common");
 const fs_1 = require("fs");
 const multiform_validator_1 = require("multiform-validator");
 const path_1 = require("path");
+const sharp = require("sharp");
 const uuid_1 = require("uuid");
 class RingGlobalValidations {
+    constructor() {
+        this.destinationPath = (0, path_1.join)(process.cwd(), "uploads");
+    }
     async validateForgedByLimit(ringModel, forgedBy, userId) {
         if (forgedBy === "Elfos") {
             const elfosRings = await ringModel.count({ where: { forgedBy, userId } });
@@ -48,27 +52,36 @@ class RingGlobalValidations {
     isValidRing(forgedBy) {
         return ["Elfos", "Anões", "Homens", "Sauron"].includes(forgedBy);
     }
-    async saveOrUpdateRingImage(file, { isUpdate, oldFileName } = {
-        isUpdate: false,
-        oldFileName: "",
-    }) {
-        if (isUpdate && !oldFileName) {
-            throw new Error("oldFileName must be provided when isUpdate is true");
+    async validateImageType(buffer) {
+        const errorMsg = "Validation failed (expected type is /jpeg|png/)";
+        if (!(0, multiform_validator_1.isValidImage)(buffer, {
+            exclude: ["gif", "ico"],
+        })) {
+            throw new common_1.BadRequestException(errorMsg);
         }
-        const destinationPath = (0, path_1.join)(process.cwd(), "uploads");
-        const newUniqueImageName = `${(0, uuid_1.v4)()}-${Date.now()}-${file.originalname}`;
-        const filePath = (0, path_1.join)(destinationPath, newUniqueImageName);
-        if (await !(0, fs_1.existsSync)(destinationPath)) {
-            (0, fs_1.mkdirSync)(destinationPath);
+        try {
+            await sharp(buffer).metadata();
         }
-        if (isUpdate) {
-            await this.deleteRingImage(oldFileName);
+        catch {
+            throw new common_1.BadRequestException(errorMsg);
         }
-        const bufferImageData = Buffer.from(file.buffer);
-        if (!(0, multiform_validator_1.isValidImage)(bufferImageData)) {
-            throw new common_1.BadRequestException("Validation failed (expected type is /jpeg|png/)");
+    }
+    generateNewUniqueImageName(originalname) {
+        return `${(0, uuid_1.v4)()}-${Date.now()}-${originalname}`;
+    }
+    async saveRingImage(buffer, newUniqueImageName) {
+        const filePath = (0, path_1.join)(this.destinationPath, newUniqueImageName);
+        if (await !(0, fs_1.existsSync)(this.destinationPath)) {
+            (0, fs_1.mkdirSync)(this.destinationPath);
         }
-        (0, fs_1.writeFileSync)(filePath, bufferImageData);
+        (0, fs_1.writeFileSync)(filePath, buffer);
+    }
+    async updateRingImage(file, oldFileName) {
+        await this.validateImageType(file.buffer);
+        await this.deleteRingImage(oldFileName);
+        const newUniqueImageName = this.generateNewUniqueImageName(file.originalname);
+        const filePath = (0, path_1.join)(this.destinationPath, newUniqueImageName);
+        (0, fs_1.writeFileSync)(filePath, file.buffer);
         return newUniqueImageName;
     }
     async deleteRingImage(imageName) {
