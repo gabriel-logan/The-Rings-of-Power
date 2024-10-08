@@ -155,11 +155,17 @@ let UserService = UserService_1 = class UserService {
         if (!(await user.passwordIsValid(password))) {
             throw new common_1.BadRequestException("Invalid password");
         }
-        user.rings.forEach(async (ring) => {
-            await (0, blob_1.del)(ring.image, {
-                token: this.blobReadWriteToken,
-            });
+        const deleteImagePromises = user.rings.map(async (ring) => {
+            try {
+                await (0, blob_1.del)(ring.image, {
+                    token: this.blobReadWriteToken,
+                });
+            }
+            catch (error) {
+                this.logger.error(`Failed to delete image for ring ${ring.id}: ${error.message}`);
+            }
         });
+        await Promise.all(deleteImagePromises);
         await user.destroy();
         return null;
     }

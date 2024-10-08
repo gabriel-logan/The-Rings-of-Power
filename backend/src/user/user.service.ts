@@ -212,11 +212,21 @@ export class UserService {
     }
 
     // Delete all rings images when deleting user
-    user.rings.forEach(async (ring) => {
-      await del(ring.image, {
-        token: this.blobReadWriteToken,
-      });
+    const deleteImagePromises = user.rings.map(async (ring) => {
+      try {
+        await del(ring.image, {
+          token: this.blobReadWriteToken,
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        this.logger.error(
+          `Failed to delete image for ring ${ring.id}: ${error.message}`,
+        );
+      }
     });
+
+    // Await all delete image promises
+    await Promise.all(deleteImagePromises);
 
     await user.destroy();
 
