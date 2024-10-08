@@ -19,4 +19,11 @@ export class Ring extends Model {
 
   @Column({ type: DataType.VIRTUAL })
   public url!: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  public userId!: number;
 }

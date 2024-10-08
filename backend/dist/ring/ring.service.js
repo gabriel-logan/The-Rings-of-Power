@@ -154,9 +154,15 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
         if (!ring) {
             throw new common_1.NotFoundException(`Ring with id ${id} not found`);
         }
-        await (0, blob_1.del)(ring.image, {
-            token: this.blobReadWriteToken,
-        });
+        try {
+            await (0, blob_1.del)(ring.image, {
+                token: this.blobReadWriteToken,
+            });
+        }
+        catch (error) {
+            this.logger.error(`Failed to delete image for ring ${id}: ${error.message}`);
+            throw new common_1.BadRequestException(`Failed to delete image for ring`);
+        }
         await ring.destroy();
         const ringCacheKey = `ring_${id}_user_${req.user.sub}`;
         const ringsCacheKey = `rings_user_${req.user.sub}`;

@@ -43,8 +43,6 @@ __decorate([
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => ring_entity_1.Ring, {
         foreignKey: "userId",
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
     }),
     __metadata("design:type", Array)
 ], User.prototype, "rings", void 0);

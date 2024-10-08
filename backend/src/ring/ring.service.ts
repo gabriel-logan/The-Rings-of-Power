@@ -246,9 +246,17 @@ export class RingService extends RingGlobalValidations {
       throw new NotFoundException(`Ring with id ${id} not found`);
     }
 
-    await del(ring.image, {
-      token: this.blobReadWriteToken,
-    });
+    try {
+      await del(ring.image, {
+        token: this.blobReadWriteToken,
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      this.logger.error(
+        `Failed to delete image for ring ${id}: ${error.message}`,
+      );
+      throw new BadRequestException(`Failed to delete image for ring`);
+    }
 
     await ring.destroy();
 

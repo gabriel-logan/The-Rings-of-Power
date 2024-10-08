@@ -38,6 +38,14 @@ __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.VIRTUAL }),
     __metadata("design:type", String)
 ], Ring.prototype, "url", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.INTEGER,
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+    }),
+    __metadata("design:type", Number)
+], Ring.prototype, "userId", void 0);
 exports.Ring = Ring = __decorate([
     sequelize_typescript_1.Table
 ], Ring);
