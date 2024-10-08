@@ -111,7 +111,8 @@ let UserService = UserService_1 = class UserService {
         try {
             await userToUpdate.save();
         }
-        catch {
+        catch (error) {
+            this.logger.error(error);
             throw new common_1.BadRequestException("Username already exists");
         }
         return {

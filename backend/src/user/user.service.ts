@@ -135,7 +135,8 @@ export class UserService {
 
     try {
       await userToUpdate.save();
-    } catch {
+    } catch (error) {
+      this.logger.error(error);
       throw new BadRequestException("Username already exists");
     }
 
