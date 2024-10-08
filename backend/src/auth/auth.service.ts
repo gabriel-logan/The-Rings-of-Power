@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectModel } from "@nestjs/sequelize";
 import { User } from "src/user/entities/user.entity";
@@ -7,6 +7,8 @@ import { AuthDto } from "./dto/auth.dto";
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectModel(User)
     private readonly userModel: typeof User,
@@ -23,10 +25,12 @@ export class AuthService {
     });
 
     if (!user) {
+      this.logger.error("User not found");
       throw new UnauthorizedException("User or password incorrect");
     }
 
     if (!(await user.passwordIsValid(authDto.password))) {
+      this.logger.error("Password not valid");
       throw new UnauthorizedException("User or password incorrect");
     }
 

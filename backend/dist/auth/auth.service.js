@@ -11,25 +11,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var AuthService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const sequelize_1 = require("@nestjs/sequelize");
 const user_entity_1 = require("../user/entities/user.entity");
-let AuthService = class AuthService {
+let AuthService = AuthService_1 = class AuthService {
     constructor(userModel, jwtService) {
         this.userModel = userModel;
         this.jwtService = jwtService;
+        this.logger = new common_1.Logger(AuthService_1.name);
     }
     async signIn(authDto) {
         const user = await this.userModel.findOne({
             where: { username: authDto.username },
         });
         if (!user) {
+            this.logger.error("User not found");
             throw new common_1.UnauthorizedException("User or password incorrect");
         }
         if (!(await user.passwordIsValid(authDto.password))) {
+            this.logger.error("Password not valid");
             throw new common_1.UnauthorizedException("User or password incorrect");
         }
         const payload = { sub: user.id, username: user.username };
@@ -41,7 +45,7 @@ let AuthService = class AuthService {
     }
 };
 exports.AuthService = AuthService;
-exports.AuthService = AuthService = __decorate([
+exports.AuthService = AuthService = AuthService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, sequelize_1.InjectModel)(user_entity_1.User)),
     __metadata("design:paramtypes", [Object, jwt_1.JwtService])
