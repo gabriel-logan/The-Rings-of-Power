@@ -13,7 +13,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RingController = void 0;
-const cache_manager_1 = require("@nestjs/cache-manager");
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const swagger_1 = require("@nestjs/swagger");
@@ -24,9 +23,8 @@ const update_ring_dto_1 = require("./dto/update-ring.dto");
 const ring_service_1 = require("./ring.service");
 const swagger_config_2 = require("./swagger.config");
 let RingController = class RingController {
-    constructor(ringService, cacheManager) {
+    constructor(ringService) {
         this.ringService = ringService;
-        this.cacheManager = cacheManager;
     }
     async findAll(req) {
         return await this.ringService.findAll(req);
@@ -36,25 +34,20 @@ let RingController = class RingController {
     }
     async create(createRingDto, file, req) {
         const ring = await this.ringService.create(createRingDto, file, req);
-        await this.cacheManager.del("rings");
         return ring;
     }
     async update(updateRingDto, id, file, req) {
         const ring = await this.ringService.update(id, updateRingDto, file, req);
-        await this.cacheManager.del("rings");
         return ring;
     }
     async delete(id, req) {
         const ring = await this.ringService.delete(id, req);
-        await this.cacheManager.del("rings");
         return ring;
     }
 };
 exports.RingController = RingController;
 __decorate([
     (0, common_1.Get)(),
-    (0, common_1.UseInterceptors)(cache_manager_1.CacheInterceptor),
-    (0, cache_manager_1.CacheKey)("rings"),
     (0, swagger_1.ApiOkResponse)(swagger_config_2.findAllApiOkResponse),
     (0, swagger_1.ApiResponse)(swagger_config_1.errorResponsePatternStructure),
     __param(0, (0, common_1.Req)()),
@@ -132,8 +125,6 @@ exports.RingController = RingController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, swagger_1.ApiTags)("Ring"),
     (0, swagger_1.ApiBearerAuth)("defaultBearerAuth"),
-    __param(1, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [ring_service_1.RingService,
-        cache_manager_1.Cache])
+    __metadata("design:paramtypes", [ring_service_1.RingService])
 ], RingController);
 //# sourceMappingURL=ring.controller.js.map

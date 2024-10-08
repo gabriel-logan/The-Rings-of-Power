@@ -1,5 +1,7 @@
+import { Cache, CACHE_MANAGER } from "@nestjs/cache-manager";
 import {
   BadRequestException,
+  Inject,
   Injectable,
   Logger,
   NotFoundException,
@@ -29,6 +31,7 @@ export class RingService extends RingGlobalValidations {
     @InjectModel(Ring)
     private readonly ringModel: typeof Ring,
     private readonly configService: ConfigService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {
     super();
     this.host = this.configService.get<string>("host")!;
@@ -41,6 +44,14 @@ export class RingService extends RingGlobalValidations {
   }
 
   async findAll(req: ReqAuthUser): Promise<Ring[]> {
+    const cacheKey = `rings_user_${req.user.sub}`;
+
+    const cachedRings = await this.cacheManager.get<Ring[]>(cacheKey);
+
+    if (cachedRings) {
+      return cachedRings;
+    }
+
     const rings = await this.ringModel.findAll({
       where: {
         userId: req.user.sub,
@@ -56,10 +67,20 @@ export class RingService extends RingGlobalValidations {
       ring.url = ring.image;
     });
 
+    await this.cacheManager.set(cacheKey, rings);
+
     return rings;
   }
 
   async findOne(id: number, req: ReqAuthUser): Promise<Ring> {
+    const cacheKey = `ring_${id}_user_${req.user.sub}`;
+
+    const cachedRing = await this.cacheManager.get<Ring>(cacheKey);
+
+    if (cachedRing) {
+      return cachedRing;
+    }
+
     const ring = await this.ringModel.findOne({
       where: {
         id: id,
@@ -74,6 +95,8 @@ export class RingService extends RingGlobalValidations {
     // ring.url = `${this.baseUrl}/uploads/${ring.image}`;
 
     ring.url = ring.image;
+
+    await this.cacheManager.set(cacheKey, ring);
 
     return ring;
   }
@@ -133,6 +156,10 @@ export class RingService extends RingGlobalValidations {
     // newRing.url = `${this.baseUrl}/uploads/${newRing.image}`;
 
     newRing.url = blob.url;
+
+    // Invalidate cache
+    const cacheKey = `rings_user_${req.user.sub}`;
+    await this.cacheManager.del(cacheKey);
 
     return newRing;
   }
@@ -200,6 +227,12 @@ export class RingService extends RingGlobalValidations {
 
     await ring.save();
 
+    // Invalidate the cache for the updated ring
+    const ringCacheKey = `ring_${id}_user_${req.user.sub}`;
+    const ringsCacheKey = `rings_user_${req.user.sub}`;
+    await this.cacheManager.del(ringCacheKey);
+    await this.cacheManager.del(ringsCacheKey);
+
     return ring;
   }
 
@@ -222,6 +255,12 @@ export class RingService extends RingGlobalValidations {
     });
 
     // await this.deleteRingImage(ring.image);
+
+    // Invalidate the cache for the deleted ring
+    const ringCacheKey = `ring_${id}_user_${req.user.sub}`;
+    const ringsCacheKey = `rings_user_${req.user.sub}`;
+    await this.cacheManager.del(ringCacheKey);
+    await this.cacheManager.del(ringsCacheKey);
 
     return null;
   }

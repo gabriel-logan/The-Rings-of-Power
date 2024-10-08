@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var RingService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RingService = void 0;
+const cache_manager_1 = require("@nestjs/cache-manager");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const sequelize_1 = require("@nestjs/sequelize");
@@ -22,10 +23,11 @@ const multiform_validator_1 = require("multiform-validator");
 const RingGlobalValidations_1 = require("./RingGlobalValidations");
 const ring_entity_1 = require("./entities/ring.entity");
 let RingService = RingService_1 = class RingService extends RingGlobalValidations_1.default {
-    constructor(ringModel, configService) {
+    constructor(ringModel, configService, cacheManager) {
         super();
         this.ringModel = ringModel;
         this.configService = configService;
+        this.cacheManager = cacheManager;
         this.logger = new common_1.Logger(RingService_1.name);
         this.host = this.configService.get("host");
         this.port = this.configService.get("port");
@@ -36,6 +38,11 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
             this.configService.get("blobReadWriteToken");
     }
     async findAll(req) {
+        const cacheKey = `rings_user_${req.user.sub}`;
+        const cachedRings = await this.cacheManager.get(cacheKey);
+        if (cachedRings) {
+            return cachedRings;
+        }
         const rings = await this.ringModel.findAll({
             where: {
                 userId: req.user.sub,
@@ -47,9 +54,15 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
         rings.forEach((ring) => {
             ring.url = ring.image;
         });
+        await this.cacheManager.set(cacheKey, rings);
         return rings;
     }
     async findOne(id, req) {
+        const cacheKey = `ring_${id}_user_${req.user.sub}`;
+        const cachedRing = await this.cacheManager.get(cacheKey);
+        if (cachedRing) {
+            return cachedRing;
+        }
         const ring = await this.ringModel.findOne({
             where: {
                 id: id,
@@ -60,6 +73,7 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
             throw new common_1.NotFoundException(`Ring with id ${id} not found`);
         }
         ring.url = ring.image;
+        await this.cacheManager.set(cacheKey, ring);
         return ring;
     }
     async create(createRingDto, file, req) {
@@ -91,6 +105,8 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
             throw new common_1.BadRequestException("Error creating ring");
         }
         newRing.url = blob.url;
+        const cacheKey = `rings_user_${req.user.sub}`;
+        await this.cacheManager.del(cacheKey);
         return newRing;
     }
     async update(id, updateRingDto, file, req) {
@@ -123,6 +139,10 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
         ring.owner = owner || ring.owner;
         ring.forgedBy = forgedBy || ring.forgedBy;
         await ring.save();
+        const ringCacheKey = `ring_${id}_user_${req.user.sub}`;
+        const ringsCacheKey = `rings_user_${req.user.sub}`;
+        await this.cacheManager.del(ringCacheKey);
+        await this.cacheManager.del(ringsCacheKey);
         return ring;
     }
     async delete(id, req) {
@@ -139,6 +159,10 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
         await (0, blob_1.del)(ring.image, {
             token: this.blobReadWriteToken,
         });
+        const ringCacheKey = `ring_${id}_user_${req.user.sub}`;
+        const ringsCacheKey = `rings_user_${req.user.sub}`;
+        await this.cacheManager.del(ringCacheKey);
+        await this.cacheManager.del(ringsCacheKey);
         return null;
     }
 };
@@ -146,6 +170,8 @@ exports.RingService = RingService;
 exports.RingService = RingService = RingService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, sequelize_1.InjectModel)(ring_entity_1.Ring)),
-    __metadata("design:paramtypes", [Object, config_1.ConfigService])
+    __param(2, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
+    __metadata("design:paramtypes", [Object, config_1.ConfigService,
+        cache_manager_1.Cache])
 ], RingService);
 //# sourceMappingURL=ring.service.js.map
