@@ -11,43 +11,43 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ring = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
-const user_entity_1 = require("../../user/entities/user.entity");
 let Ring = class Ring extends sequelize_typescript_1.Model {
 };
 exports.Ring = Ring;
 __decorate([
-    sequelize_typescript_1.Column,
+    (0, sequelize_typescript_1.Column)({
+        allowNull: false,
+    }),
     __metadata("design:type", String)
 ], Ring.prototype, "name", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    (0, sequelize_typescript_1.Column)({
+        allowNull: false,
+    }),
     __metadata("design:type", String)
 ], Ring.prototype, "power", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    (0, sequelize_typescript_1.Column)({
+        allowNull: false,
+    }),
     __metadata("design:type", String)
 ], Ring.prototype, "owner", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    (0, sequelize_typescript_1.Column)({
+        allowNull: false,
+    }),
     __metadata("design:type", String)
 ], Ring.prototype, "forgedBy", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    (0, sequelize_typescript_1.Column)({
+        allowNull: false,
+    }),
     __metadata("design:type", String)
 ], Ring.prototype, "image", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.VIRTUAL }),
     __metadata("design:type", String)
 ], Ring.prototype, "url", void 0);
-__decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => user_entity_1.User),
-    (0, sequelize_typescript_1.Column)({
-        type: sequelize_typescript_1.DataType.INTEGER,
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-    }),
-    __metadata("design:type", Number)
-], Ring.prototype, "userId", void 0);
 exports.Ring = Ring = __decorate([
     sequelize_typescript_1.Table
 ], Ring);

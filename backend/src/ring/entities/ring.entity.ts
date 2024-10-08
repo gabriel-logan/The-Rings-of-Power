@@ -1,37 +1,32 @@
-import {
-  Column,
-  DataType,
-  ForeignKey,
-  Model,
-  Table,
-} from "sequelize-typescript";
-import { User } from "src/user/entities/user.entity";
+import { Column, DataType, Model, Table } from "sequelize-typescript";
 
 @Table
 export class Ring extends Model {
-  @Column
+  @Column({
+    allowNull: false,
+  })
   public name!: string;
 
-  @Column
+  @Column({
+    allowNull: false,
+  })
   public power!: string;
 
-  @Column
+  @Column({
+    allowNull: false,
+  })
   public owner!: string;
 
-  @Column
+  @Column({
+    allowNull: false,
+  })
   public forgedBy!: string;
 
-  @Column
+  @Column({
+    allowNull: false,
+  })
   public image!: string;
 
   @Column({ type: DataType.VIRTUAL })
   public url!: string;
-
-  @ForeignKey(() => User)
-  @Column({
-    type: DataType.INTEGER,
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
-  })
-  public userId!: number;
 }

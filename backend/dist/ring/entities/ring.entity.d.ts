@@ -6,5 +6,4 @@ export declare class Ring extends Model {
     forgedBy: string;
     image: string;
     url: string;
-    userId: number;
 }

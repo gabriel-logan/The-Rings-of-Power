@@ -27,11 +27,14 @@ exports.User = User;
 __decorate([
     (0, sequelize_typescript_1.Column)({
         unique: true,
+        allowNull: false,
     }),
     __metadata("design:type", String)
 ], User.prototype, "username", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    (0, sequelize_typescript_1.Column)({
+        allowNull: false,
+    }),
     __metadata("design:type", String)
 ], User.prototype, "passwordHash", void 0);
 __decorate([
@@ -43,6 +46,7 @@ __decorate([
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => ring_entity_1.Ring, {
         foreignKey: "userId",
+        onDelete: "CASCADE",
     }),
     __metadata("design:type", Array)
 ], User.prototype, "rings", void 0);

@@ -13,10 +13,13 @@ import { Ring } from "src/ring/entities/ring.entity";
 export class User extends Model {
   @Column({
     unique: true,
+    allowNull: false,
   })
   public username!: string;
 
-  @Column
+  @Column({
+    allowNull: false,
+  })
   public passwordHash!: string;
 
   @Column({
@@ -37,6 +40,7 @@ export class User extends Model {
 
   @HasMany(() => Ring, {
     foreignKey: "userId",
+    onDelete: "CASCADE",
   })
   public rings!: Ring[];
 }
