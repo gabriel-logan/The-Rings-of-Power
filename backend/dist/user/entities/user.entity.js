@@ -15,8 +15,10 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 const ring_entity_1 = require("../../ring/entities/ring.entity");
 let User = class User extends sequelize_typescript_1.Model {
     static async hashPassword(instance) {
-        const newPassword = await bcrypt.hash(instance.password, 8);
-        instance.passwordHash = newPassword;
+        if (instance.password) {
+            const newPassword = await bcrypt.hash(instance.password, 8);
+            instance.passwordHash = newPassword;
+        }
     }
     async passwordIsValid(password) {
         const compare = await bcrypt.compare(password, this.passwordHash);
@@ -25,11 +27,16 @@ let User = class User extends sequelize_typescript_1.Model {
 };
 exports.User = User;
 __decorate([
+    sequelize_typescript_1.Column,
+    __metadata("design:type", String)
+], User.prototype, "username", void 0);
+__decorate([
+    sequelize_typescript_1.IsEmail,
     (0, sequelize_typescript_1.Column)({
         unique: true,
     }),
     __metadata("design:type", String)
-], User.prototype, "username", void 0);
+], User.prototype, "email", void 0);
 __decorate([
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
@@ -40,6 +47,16 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        allowNull: false,
+    }),
+    __metadata("design:type", Boolean)
+], User.prototype, "canSignWithEmailAndPassword", void 0);
+__decorate([
+    sequelize_typescript_1.Column,
+    __metadata("design:type", String)
+], User.prototype, "githubUserId", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => ring_entity_1.Ring, {
         foreignKey: "userId",

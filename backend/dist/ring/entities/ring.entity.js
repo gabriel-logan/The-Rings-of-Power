@@ -38,7 +38,8 @@ __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.VIRTUAL,
         get() {
-            return this.getDataValue("image");
+            const url = process.env.IMAGES_URL ?? "http://localhost:3000/uploads";
+            return `${url}/${this.getDataValue("image")}`;
         },
     }),
     __metadata("design:type", String)

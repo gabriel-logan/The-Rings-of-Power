@@ -12,9 +12,9 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 const sequelize_1 = require("@nestjs/sequelize");
+const ring_controller_1 = require("./controllers/ring.controller");
 const ring_entity_1 = require("./entities/ring.entity");
-const ring_controller_1 = require("./ring.controller");
-const ring_service_1 = require("./ring.service");
+const ring_service_1 = require("./providers/ring.service");
 let RingModule = class RingModule {
 };
 exports.RingModule = RingModule;

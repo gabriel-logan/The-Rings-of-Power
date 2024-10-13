@@ -3,36 +3,38 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import type { SequelizeModuleAsyncOptions } from "@nestjs/sequelize";
 import pg from "pg";
 
+import envDatabase from "./env.database";
+
 const sequelizeAsyncConfig: SequelizeModuleAsyncOptions = {
-  imports: [ConfigModule],
+  imports: [ConfigModule.forFeature(envDatabase)],
   useFactory: (configService: ConfigService) => {
     const logger = new Logger("SequelizeConfig");
     const nodeEnv = configService.get("nodeEnv");
 
     const host =
       nodeEnv === "development"
-        ? configService.get("database.host")
-        : configService.get("postgresHost");
+        ? configService.get("database.mysql.host")
+        : configService.get("database.postgres.host");
 
     const port =
       nodeEnv === "development"
-        ? configService.get("database.port")
-        : configService.get("postgresPort");
+        ? configService.get("database.mysql.port")
+        : configService.get("database.postgres.port");
 
     const username =
       nodeEnv === "development"
-        ? configService.get("database.username")
-        : configService.get("postgresUser");
+        ? configService.get("database.mysql.username")
+        : configService.get("database.postgres.username");
 
     const password =
       nodeEnv === "development"
-        ? configService.get("database.password")
-        : configService.get("postgresPassword");
+        ? configService.get("database.mysql.password")
+        : configService.get("database.postgres.password");
 
     const database =
       nodeEnv === "development"
-        ? configService.get("database.name")
-        : configService.get("postgresDatabase");
+        ? configService.get("database.mysql.name")
+        : configService.get("database.postgres.database");
 
     return {
       dialect: nodeEnv === "development" ? "mysql" : "postgres",
@@ -69,7 +71,7 @@ const sequelizeAsyncConfig: SequelizeModuleAsyncOptions = {
       },
 
       sync: {
-        force: false,
+        force: true,
       },
     };
   },

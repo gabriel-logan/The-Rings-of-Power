@@ -7,21 +7,31 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserModule = void 0;
+const cache_manager_1 = require("@nestjs/cache-manager");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 const sequelize_1 = require("@nestjs/sequelize");
+const github_user_controller_1 = require("./controllers/github-user.controller");
+const local_user_controller_1 = require("./controllers/local-user.controller");
 const user_entity_1 = require("./entities/user.entity");
-const user_controller_1 = require("./user.controller");
-const user_service_1 = require("./user.service");
+const github_user_service_1 = require("./providers/github-user.service");
+const local_user_service_1 = require("./providers/local-user.service");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
 exports.UserModule = UserModule = __decorate([
     (0, common_1.Module)({
-        imports: [sequelize_1.SequelizeModule.forFeature([user_entity_1.User]), config_1.ConfigModule, jwt_1.JwtModule],
-        controllers: [user_controller_1.UserController],
-        providers: [user_service_1.UserService],
+        imports: [
+            sequelize_1.SequelizeModule.forFeature([user_entity_1.User]),
+            config_1.ConfigModule,
+            jwt_1.JwtModule,
+            cache_manager_1.CacheModule.register({
+                ttl: 60000 * 10,
+            }),
+        ],
+        controllers: [local_user_controller_1.LocalUserController, github_user_controller_1.GithubUserController],
+        providers: [local_user_service_1.LocalUserService, github_user_service_1.GithubUserService],
     })
 ], UserModule);
 //# sourceMappingURL=user.module.js.map

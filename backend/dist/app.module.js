@@ -15,7 +15,6 @@ const path_1 = require("path");
 const app_controller_1 = require("./app.controller");
 const auth_module_1 = require("./auth/auth.module");
 const env_global_1 = require("./configs/env.global");
-const env_postgres_sql_1 = require("./configs/env.postgres.sql");
 const sequelize_config_1 = require("./configs/sequelize.config");
 const ring_module_1 = require("./ring/ring.module");
 const user_module_1 = require("./user/user.module");
@@ -26,13 +25,13 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({
-                load: [env_global_1.default, env_postgres_sql_1.default],
+                load: [env_global_1.default],
             }),
             sequelize_1.SequelizeModule.forRootAsync(sequelize_config_1.default),
             serve_static_1.ServeStaticModule.forRoot({
-                rootPath: (0, path_1.join)(__dirname, "..", "public"),
-                serveRoot: "/",
-                renderPath: "/",
+                rootPath: (0, path_1.join)(process.cwd(), "uploads"),
+                serveRoot: "/uploads",
+                renderPath: "/uploads",
             }),
             ring_module_1.RingModule,
             user_module_1.UserModule,

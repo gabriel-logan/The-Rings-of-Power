@@ -4,6 +4,7 @@ import {
   Column,
   DataType,
   HasMany,
+  IsEmail,
   Model,
   Table,
 } from "sequelize-typescript";
@@ -11,10 +12,14 @@ import { Ring } from "src/ring/entities/ring.entity";
 
 @Table
 export class User extends Model {
+  @Column
+  public username!: string;
+
+  @IsEmail
   @Column({
     unique: true,
   })
-  public username!: string;
+  public email!: string;
 
   @Column
   public passwordHash!: string;
@@ -24,10 +29,21 @@ export class User extends Model {
   })
   public password!: string;
 
+  @Column({
+    allowNull: false,
+  })
+  public canSignWithEmailAndPassword!: boolean;
+
+  @Column
+  public githubUserId!: string;
+
   @BeforeSave({ name: "hashPassword" })
   static async hashPassword(instance: User): Promise<void> {
-    const newPassword = await bcrypt.hash(instance.password, 8);
-    instance.passwordHash = newPassword;
+    // Only hash the password if it has been set
+    if (instance.password) {
+      const newPassword = await bcrypt.hash(instance.password, 8);
+      instance.passwordHash = newPassword;
+    }
   }
 
   async passwordIsValid(password: string): Promise<boolean> {

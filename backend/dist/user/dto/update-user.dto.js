@@ -17,8 +17,17 @@ class UpdateUserDto extends (0, swagger_1.PartialType)(create_user_dto_1.CreateU
 }
 exports.UpdateUserDto = UpdateUserDto;
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, swagger_1.ApiProperty)(),
+    (0, swagger_1.ApiProperty)({
+        required: false,
+    }),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "newPassword", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        required: true,
+    }),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "password", void 0);
 //# sourceMappingURL=update-user.dto.js.map
