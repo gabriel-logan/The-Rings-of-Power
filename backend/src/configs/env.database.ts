@@ -12,7 +12,7 @@ interface PostgresDatabase {
   prismaUrl: string;
   urlNoSsl: string;
   urlNonPooling: string;
-  user: string;
+  username: string;
   host: string;
   password: string;
   database: string;
@@ -42,7 +42,7 @@ export default (): EnvConfig => ({
       prismaUrl: process.env.POSTGRES_PRISMA_URL!,
       urlNoSsl: process.env.POSTGRES_URL_NO_SSL!,
       urlNonPooling: process.env.POSTGRES_URL_NON_POOLING!,
-      user: process.env.POSTGRES_USER!,
+      username: process.env.POSTGRES_USER!,
       host: process.env.POSTGRES_HOST!,
       password: process.env.POSTGRES_PASSWORD!,
       database: process.env.POSTGRES_DATABASE!,

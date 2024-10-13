@@ -11,7 +11,7 @@ interface PostgresDatabase {
     prismaUrl: string;
     urlNoSsl: string;
     urlNonPooling: string;
-    user: string;
+    username: string;
     host: string;
     password: string;
     database: string;
