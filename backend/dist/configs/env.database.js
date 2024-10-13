@@ -11,6 +11,7 @@ exports.default = () => ({
             name: process.env.DB_NAME,
         },
         postgres: {
+            dialect: process.env.POSTGRES_DIALECT,
             url: process.env.POSTGRES_URL,
             prismaUrl: process.env.POSTGRES_PRISMA_URL,
             urlNoSsl: process.env.POSTGRES_URL_NO_SSL,

@@ -8,6 +8,7 @@ interface MysqlDatabase {
 }
 
 interface PostgresDatabase {
+  dialect: string;
   url: string;
   prismaUrl: string;
   urlNoSsl: string;
@@ -38,6 +39,7 @@ export default (): EnvConfig => ({
     },
 
     postgres: {
+      dialect: process.env.POSTGRES_DIALECT!,
       url: process.env.POSTGRES_URL!,
       prismaUrl: process.env.POSTGRES_PRISMA_URL!,
       urlNoSsl: process.env.POSTGRES_URL_NO_SSL!,

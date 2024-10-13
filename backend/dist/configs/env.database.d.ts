@@ -7,6 +7,7 @@ interface MysqlDatabase {
     name: string;
 }
 interface PostgresDatabase {
+    dialect: string;
     url: string;
     prismaUrl: string;
     urlNoSsl: string;
