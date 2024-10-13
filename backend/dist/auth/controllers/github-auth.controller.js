@@ -40,14 +40,14 @@ let GithubAuthController = class GithubAuthController {
         });
         res.cookie("serverResponseData", payloadStringfied, {
             httpOnly: true,
-            sameSite: "strict",
+            sameSite: "lax",
             secure: nodeEnv !== "development",
             maxAge: 1000 * 5,
             priority: "high",
         });
         res.cookie("fromServer", "true", {
             httpOnly: false,
-            sameSite: "strict",
+            sameSite: "lax",
             secure: nodeEnv !== "development",
             maxAge: 1000 * 5,
             priority: "high",
