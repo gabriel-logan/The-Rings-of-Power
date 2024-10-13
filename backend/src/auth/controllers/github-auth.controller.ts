@@ -44,7 +44,7 @@ export class GithubAuthController {
 
     res.cookie("serverResponseData", payloadStringfied, {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: "none",
       secure: nodeEnv !== "development",
       maxAge: 1000 * 5, // 5 seconds
       priority: "high",
@@ -52,7 +52,7 @@ export class GithubAuthController {
 
     res.cookie("fromServer", "true", {
       httpOnly: false,
-      sameSite: "lax",
+      sameSite: "none",
       secure: nodeEnv !== "development",
       maxAge: 1000 * 5, // 5 seconds
       priority: "high",
