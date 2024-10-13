@@ -24,8 +24,11 @@ const sequelizeAsyncConfig = {
         const database = nodeEnv === "development"
             ? configService.get("database.mysql.name")
             : configService.get("database.postgres.database");
+        const dialect = nodeEnv === "development"
+            ? configService.get("database.mysql.dialect")
+            : configService.get("database.postgres.dialect");
         return {
-            dialect: nodeEnv === "development" ? "mysql" : "postgres",
+            dialect: dialect,
             dialectModule: nodeEnv === "development" ? undefined : pg_1.default,
             host: host,
             port: port,
@@ -54,7 +57,7 @@ const sequelizeAsyncConfig = {
                 return false;
             },
             sync: {
-                force: false,
+                force: true,
             },
         };
     },

@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const swagger_1 = require("@nestjs/swagger");
 const jwt_auth_guard_1 = require("../../auth/guards/jwt-auth.guard");
+const constants_1 = require("../../global/constants");
 const swagger_config_1 = require("../../global/swagger.config");
 const create_ring_dto_1 = require("../dto/create-ring.dto");
 const update_ring_dto_1 = require("../dto/update-ring.dto");
@@ -75,12 +76,9 @@ __decorate([
     __param(0, (0, common_1.Body)(common_1.ValidationPipe)),
     __param(1, (0, common_1.UploadedFile)(new common_1.ParseFilePipeBuilder()
         .addFileTypeValidator({
-        fileType: /jpeg|png/,
+        fileType: constants_1.fileValidation.image.allowedTypes,
     })
-        .addMaxSizeValidator({
-        maxSize: 1024 * 500,
-        message: "File is too large. Max size is 500KB",
-    })
+        .addMaxSizeValidator(constants_1.fileValidation.image.size)
         .build())),
     __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -98,12 +96,9 @@ __decorate([
     __param(1, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __param(2, (0, common_1.UploadedFile)(new common_1.ParseFilePipeBuilder()
         .addFileTypeValidator({
-        fileType: /jpeg|png/,
+        fileType: constants_1.fileValidation.image.allowedTypes,
     })
-        .addMaxSizeValidator({
-        maxSize: 1024 * 500,
-        message: "File is too large. Max size is 500KB",
-    })
+        .addMaxSizeValidator(constants_1.fileValidation.image.size)
         .build({ fileIsRequired: false }))),
     __param(3, (0, common_1.Req)()),
     __metadata("design:type", Function),

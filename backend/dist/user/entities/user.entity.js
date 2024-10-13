@@ -21,6 +21,9 @@ let User = class User extends sequelize_typescript_1.Model {
         }
     }
     async passwordIsValid(password) {
+        if (!this.passwordHash) {
+            return false;
+        }
         const compare = await bcrypt.compare(password, this.passwordHash);
         return compare;
     }
@@ -34,12 +37,15 @@ __decorate([
     sequelize_typescript_1.IsEmail,
     (0, sequelize_typescript_1.Column)({
         unique: true,
+        type: sequelize_typescript_1.DataType.STRING,
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], User.prototype, "email", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
-    __metadata("design:type", String)
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+    }),
+    __metadata("design:type", Object)
 ], User.prototype, "passwordHash", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
@@ -54,8 +60,10 @@ __decorate([
     __metadata("design:type", Boolean)
 ], User.prototype, "canSignWithEmailAndPassword", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
-    __metadata("design:type", String)
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+    }),
+    __metadata("design:type", Object)
 ], User.prototype, "githubUserId", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => ring_entity_1.Ring, {

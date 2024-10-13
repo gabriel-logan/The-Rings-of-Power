@@ -10,8 +10,8 @@ exports.RingModule = void 0;
 const cache_manager_1 = require("@nestjs/cache-manager");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
-const jwt_1 = require("@nestjs/jwt");
 const sequelize_1 = require("@nestjs/sequelize");
+const constants_1 = require("../global/constants");
 const ring_controller_1 = require("./controllers/ring.controller");
 const ring_entity_1 = require("./entities/ring.entity");
 const ring_service_1 = require("./providers/ring.service");
@@ -23,9 +23,8 @@ exports.RingModule = RingModule = __decorate([
         imports: [
             sequelize_1.SequelizeModule.forFeature([ring_entity_1.Ring]),
             config_1.ConfigModule,
-            jwt_1.JwtModule,
             cache_manager_1.CacheModule.register({
-                ttl: 60000 * 10,
+                ttl: constants_1.cacheTtl,
             }),
         ],
         controllers: [ring_controller_1.RingController],

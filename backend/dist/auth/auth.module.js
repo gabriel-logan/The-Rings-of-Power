@@ -15,6 +15,7 @@ const passport_1 = require("@nestjs/passport");
 const sequelize_1 = require("@nestjs/sequelize");
 const env_github_1 = require("../configs/env.github");
 const env_secrets_1 = require("../configs/env.secrets");
+const constants_1 = require("../global/constants");
 const user_entity_1 = require("../user/entities/user.entity");
 const github_auth_controller_1 = require("./controllers/github-auth.controller");
 const local_auth_controller_1 = require("./controllers/local-auth.controller");
@@ -41,7 +42,7 @@ exports.AuthModule = AuthModule = __decorate([
             }),
             passport_1.PassportModule,
             cache_manager_1.CacheModule.register({
-                ttl: 60000 * 10,
+                ttl: constants_1.cacheTtl,
             }),
         ],
         controllers: [local_auth_controller_1.LocalAuthController, github_auth_controller_1.GithubAuthController],

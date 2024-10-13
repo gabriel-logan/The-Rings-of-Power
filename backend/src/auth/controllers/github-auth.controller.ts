@@ -43,7 +43,7 @@ export class GithubAuthController {
       fromServer: true,
     });
 
-    const algorithm = this.configService.get("queryParams.algorithm");
+    const algorithm = "aes-256-ctr";
     const secretKey = this.configService.get("queryParams.secret");
 
     const encryptedPayload = encrypt(
@@ -58,3 +58,22 @@ export class GithubAuthController {
     );
   }
 }
+
+// Use cookies if you can have back-end and front-end in the same domain, as I haven't been able to do this, I'm using query params
+/**
+  res.cookie("serverResponseData", payloadStringfied, {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: nodeEnv !== "development",
+    maxAge: 1000 * 5, // 5 seconds
+    priority: "high",
+  });
+
+  res.cookie("fromServer", "true", {
+    httpOnly: false,
+    sameSite: "strict",
+    secure: nodeEnv !== "development",
+    maxAge: 1000 * 5, // 5 seconds
+    priority: "high",
+  });
+*/

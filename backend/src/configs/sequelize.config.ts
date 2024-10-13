@@ -2,6 +2,7 @@ import { Logger } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import type { SequelizeModuleAsyncOptions } from "@nestjs/sequelize";
 import pg from "pg";
+import type { Dialect } from "sequelize";
 
 import envDatabase from "./env.database";
 
@@ -36,8 +37,13 @@ const sequelizeAsyncConfig: SequelizeModuleAsyncOptions = {
         ? configService.get("database.mysql.name")
         : configService.get("database.postgres.database");
 
+    const dialect =
+      nodeEnv === "development"
+        ? (configService.get("database.mysql.dialect") as Dialect)
+        : (configService.get("database.postgres.dialect") as Dialect);
+
     return {
-      dialect: nodeEnv === "development" ? "mysql" : "postgres",
+      dialect: dialect,
       dialectModule: nodeEnv === "development" ? undefined : pg,
       host: host,
       port: port,
@@ -71,7 +77,7 @@ const sequelizeAsyncConfig: SequelizeModuleAsyncOptions = {
       },
 
       sync: {
-        force: false,
+        force: true,
       },
     };
   },

@@ -104,7 +104,7 @@ let LocalUserService = LocalUserService_1 = class LocalUserService extends UserG
             });
         }
         catch {
-            throw new common_1.BadRequestException("User already exists");
+            throw new common_1.BadRequestException("Email already exists");
         }
         await this.cacheManager.del(constants_1.cacheKeys.users());
         return {
@@ -144,7 +144,7 @@ let LocalUserService = LocalUserService_1 = class LocalUserService extends UserG
             await userToUpdate.save();
         }
         catch {
-            throw new common_1.BadRequestException("User already exists");
+            throw new common_1.BadRequestException("Email already exists");
         }
         await this.cacheManager.del(constants_1.cacheKeys.users());
         await this.cacheManager.del(constants_1.cacheKeys.user(id));

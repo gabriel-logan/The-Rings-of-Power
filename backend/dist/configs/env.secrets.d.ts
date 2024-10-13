@@ -5,7 +5,6 @@ interface EnvConfig {
     };
     queryParams: {
         secret: string;
-        algorithm: string;
     };
 }
 declare const _default: () => EnvConfig;

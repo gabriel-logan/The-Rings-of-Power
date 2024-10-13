@@ -1,8 +1,8 @@
 interface EnvConfig {
     github: {
-        clientId: string | undefined;
-        clientSecret: string | undefined;
-        callbackUrl: string | undefined;
+        clientId: string;
+        clientSecret: string;
+        callbackUrl: string;
     };
 }
 declare const _default: () => EnvConfig;

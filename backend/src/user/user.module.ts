@@ -1,8 +1,8 @@
 import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { JwtModule } from "@nestjs/jwt";
 import { SequelizeModule } from "@nestjs/sequelize";
+import { cacheTtl } from "src/global/constants";
 
 import { GithubUserController } from "./controllers/github-user.controller";
 import { LocalUserController } from "./controllers/local-user.controller";
@@ -14,9 +14,8 @@ import { LocalUserService } from "./providers/local-user.service";
   imports: [
     SequelizeModule.forFeature([User]),
     ConfigModule,
-    JwtModule,
     CacheModule.register({
-      ttl: 60000 * 10, // 10 minutes
+      ttl: cacheTtl,
     }),
   ],
   controllers: [LocalUserController, GithubUserController],

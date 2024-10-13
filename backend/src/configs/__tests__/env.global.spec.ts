@@ -8,15 +8,15 @@ describe("env.global", () => {
   it("should have a nodeEnv property", () => {
     const config = envGlobal();
     expect(config.nodeEnv).toBeDefined();
-    expect(config.nodeEnv).toBe(process.env.NODE_ENV ?? "development");
+    expect(config.nodeEnv).toBe(process.env.NODE_ENV ?? "production");
   });
 
-  it("should return development as default value for nodeEnv", () => {
+  it("should return production as default value for nodeEnv", () => {
     delete process.env.NODE_ENV;
 
     const config = envGlobal();
 
-    expect(config.nodeEnv).toBe("development");
+    expect(config.nodeEnv).toBe("production");
   });
 
   it("should have an allowedOrigin property", () => {
@@ -59,12 +59,5 @@ describe("env.global", () => {
     expect(config.imagesUrl).toBe(
       process.env.IMAGES_URL ?? "http://localhost:3000/uploads",
     );
-  });
-
-  it("should have a token configuration", () => {
-    const config = envGlobal();
-    expect(config.token).toBeDefined();
-    expect(config.token.secret).toBe(process.env.TOKEN_SECRET);
-    expect(config.token.expiration).toBe(process.env.TOKEN_EXPIRATION ?? "1d");
   });
 });

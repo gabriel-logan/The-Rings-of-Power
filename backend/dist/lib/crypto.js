@@ -20,7 +20,10 @@ function decrypt(hash, algorithm, secretKey) {
         return decrypted.toString();
     }
     catch (err) {
-        throw new Error("Decryption failed: " + err.message);
+        if (err instanceof Error) {
+            throw new Error("Decryption failed: " + err.message);
+        }
+        throw new Error("Decryption failed: Unknown error");
     }
 }
 function encrypt(text, algorithm, secretKey, ivSize) {

@@ -5,6 +5,7 @@ import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
 import * as fs from "fs";
 import * as path from "path";
+import { cacheModuleOptions } from "src/global/constants";
 import type { ReqUser } from "src/global/types";
 import { Ring } from "src/ring/entities/ring.entity";
 
@@ -25,11 +26,7 @@ describe("LocalUserService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        CacheModule.register({
-          ttl: 60000 * 10, // 10 minutes
-        }),
-      ],
+      imports: [CacheModule.register(cacheModuleOptions)],
       providers: [
         LocalUserService,
         {
@@ -216,7 +213,7 @@ describe("LocalUserService", () => {
           email: "test@test.com",
           password: "test",
         }),
-      ).rejects.toThrow(new NotFoundException("User already exists"));
+      ).rejects.toThrow(new NotFoundException("Email already exists"));
     });
 
     it("should return a user", async () => {
@@ -297,7 +294,7 @@ describe("LocalUserService", () => {
           username: "test",
           email: "test@test.com",
           password: "   ",
-        } as User),
+        }),
       ).rejects.toThrow(new BadRequestException("Password can not be empty"));
     });
 
@@ -386,7 +383,7 @@ describe("LocalUserService", () => {
             user: { sub: 1 },
           } as ReqUser,
         ),
-      ).rejects.toThrow(new BadRequestException("User already exists"));
+      ).rejects.toThrow(new BadRequestException("Email already exists"));
 
       expect(findByPkSpyOn).toHaveBeenCalledWith(1);
       expect(user.save).toHaveBeenCalled();

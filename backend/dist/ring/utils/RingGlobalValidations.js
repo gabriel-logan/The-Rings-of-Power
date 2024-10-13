@@ -86,7 +86,8 @@ class RingGlobalValidations {
         return ["Elfos", "Anões", "Homens", "Sauron"].includes(forgedBy);
     }
     generateNewUniqueImageName(originalname) {
-        return `${(0, uuid_1.v4)()}-${Date.now()}-${originalname}`;
+        const mimeType = originalname.substring(originalname.lastIndexOf(".") + 1);
+        return `${(0, uuid_1.v4)()}-${Date.now()}.${mimeType}`;
     }
     async saveRingImage(buffer, newUniqueImageName) {
         const filePath = (0, path_1.join)(this.destinationPath, newUniqueImageName);

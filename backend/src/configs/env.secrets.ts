@@ -6,7 +6,6 @@ interface EnvConfig {
 
   queryParams: {
     secret: string;
-    algorithm: string;
   };
 }
 
@@ -18,6 +17,5 @@ export default (): EnvConfig => ({
 
   queryParams: {
     secret: process.env.QUERYPARAMS_OAUTH_PRIVATE_KEY!,
-    algorithm: process.env.QUERYPARAMS_OAUTH_ALGORITHM!,
   },
 });

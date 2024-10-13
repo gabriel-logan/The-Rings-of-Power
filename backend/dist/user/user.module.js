@@ -10,8 +10,8 @@ exports.UserModule = void 0;
 const cache_manager_1 = require("@nestjs/cache-manager");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
-const jwt_1 = require("@nestjs/jwt");
 const sequelize_1 = require("@nestjs/sequelize");
+const constants_1 = require("../global/constants");
 const github_user_controller_1 = require("./controllers/github-user.controller");
 const local_user_controller_1 = require("./controllers/local-user.controller");
 const user_entity_1 = require("./entities/user.entity");
@@ -25,9 +25,8 @@ exports.UserModule = UserModule = __decorate([
         imports: [
             sequelize_1.SequelizeModule.forFeature([user_entity_1.User]),
             config_1.ConfigModule,
-            jwt_1.JwtModule,
             cache_manager_1.CacheModule.register({
-                ttl: 60000 * 10,
+                ttl: constants_1.cacheTtl,
             }),
         ],
         controllers: [local_user_controller_1.LocalUserController, github_user_controller_1.GithubUserController],

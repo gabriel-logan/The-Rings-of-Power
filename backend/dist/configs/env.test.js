@@ -11,6 +11,11 @@ exports.default = () => ({
         clientSecret: "github-client-secret",
         callbackUrl: "http://localhost:3000/auth/github/callback",
     },
+    queryParams: {
+        secret: "awdawdawdawdawdawdawdawda12wdawd",
+        algorithm: "aes-256-cbc",
+        ivSize: 16,
+    },
     token: {
         secret: "test",
         expiration: "1d",

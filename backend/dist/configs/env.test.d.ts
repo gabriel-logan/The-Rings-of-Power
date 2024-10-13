@@ -9,6 +9,11 @@ interface EnvConfig {
         clientSecret: string;
         callbackUrl: string;
     };
+    queryParams: {
+        secret: string;
+        algorithm: string;
+        ivSize: number;
+    };
     token: {
         secret?: string;
         expiration: string;

@@ -3,7 +3,7 @@ export interface ReqUser extends Request {
     user: {
         sub: number;
         username: string;
-        email: string;
+        email: string | null;
     };
 }
 export type JwtPayload = ReqUser["user"] & {

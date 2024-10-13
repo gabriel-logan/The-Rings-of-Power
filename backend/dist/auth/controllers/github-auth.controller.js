@@ -38,7 +38,7 @@ let GithubAuthController = class GithubAuthController {
             userId,
             fromServer: true,
         });
-        const algorithm = this.configService.get("queryParams.algorithm");
+        const algorithm = "aes-256-ctr";
         const secretKey = this.configService.get("queryParams.secret");
         const encryptedPayload = (0, crypto_1.encrypt)(payloadStringfied, algorithm, secretKey, 16);
         return res.redirect(clientUrl + "/login" + `?payload=${JSON.stringify(encryptedPayload)}`);
