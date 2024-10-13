@@ -42,7 +42,9 @@ export default function UsersFound({
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.4 }}
             >
-              {user.username.charAt(0).toUpperCase() + user.username.slice(1)}
+              {user.username.trim()
+                ? user.username.charAt(0).toUpperCase() + user.username.slice(1)
+                : "User"}
             </motion.h2>
 
             <Link datatype="user-link-profile" href={`/users/${user.id}`}>
@@ -68,11 +70,12 @@ export default function UsersFound({
               >
                 <p className="text-yellow-300">No rings available</p>
                 <Image
-                  className="mt-6"
+                  className="mt-6 h-auto w-auto"
                   src="/ring.png"
                   alt="No ring"
                   width={150}
                   height={150}
+                  priority
                 />
               </motion.div>
             )}

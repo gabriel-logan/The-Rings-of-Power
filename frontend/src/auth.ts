@@ -12,6 +12,8 @@ declare module "next-auth" {
       accessToken: string;
       userId: number;
       username: string;
+      email: string;
+      isOAuth: boolean;
     };
   }
 
@@ -19,6 +21,8 @@ declare module "next-auth" {
     accessToken: string;
     userId: number;
     username: string;
+    email?: string | null;
+    isOAuth: boolean;
   }
 }
 
@@ -27,32 +31,23 @@ declare module "next-auth/jwt" {
     accessToken: string;
     userId: number;
     username: string;
+    email: string;
+    isOAuth: boolean;
   }
 }
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
   pages: {
     signIn: "/login",
   },
   providers: [
     Credentials({
-      credentials: {
-        username: {
-          label: "Username",
-          placeholder: "Enter your username",
-          type: "text",
-        },
-        password: {
-          label: "Password",
-          placeholder: "Enter your password",
-          type: "password",
-        },
-      },
+      id: "Credentials",
       async authorize(credentials) {
-        const { username, password } = credentials;
+        const { email, password } = credentials;
 
-        if (!username || !password) {
-          throw new Error("Missing username or password");
+        if (!email || !password) {
+          throw new Error("Missing email or password");
         }
 
         const response = await axiosInstance.post<LoginSuccess>(
@@ -64,6 +59,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           accessToken: response.data.accessToken,
           username: response.data.username,
           userId: response.data.userId,
+          email: response.data.email,
+          isOAuth: false,
+        };
+      },
+    }),
+    Credentials({
+      id: "Github",
+      authorize(credentials) {
+        const { accessToken, username, userId, email } = credentials;
+
+        return {
+          accessToken: accessToken as string,
+          username: username as string,
+          userId: userId ? parseInt(userId as string, 10) : 0,
+          email: email as string,
+          isOAuth: true,
         };
       },
     }),
@@ -75,6 +86,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.accessToken = user.accessToken;
         token.username = user.username;
         token.userId = user.userId;
+        token.email = user.email as string;
+        token.isOAuth = user.isOAuth;
       }
 
       return token;
@@ -83,6 +96,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.accessToken = token.accessToken;
       session.user.username = token.username;
       session.user.userId = token.userId;
+      session.user.email = token.email;
+      session.user.isOAuth = token.isOAuth;
 
       return session;
     },
