@@ -29,9 +29,9 @@ exports.AppModule = AppModule = __decorate([
             }),
             sequelize_1.SequelizeModule.forRootAsync(sequelize_config_1.default),
             serve_static_1.ServeStaticModule.forRoot({
-                rootPath: (0, path_1.join)(process.cwd(), "uploads"),
-                serveRoot: "/uploads",
-                renderPath: "/uploads",
+                rootPath: (0, path_1.join)(__dirname, "..", "public"),
+                serveRoot: "/",
+                renderPath: "/",
             }),
             ring_module_1.RingModule,
             user_module_1.UserModule,
