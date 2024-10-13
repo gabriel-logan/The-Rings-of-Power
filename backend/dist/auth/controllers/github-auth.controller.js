@@ -16,6 +16,7 @@ exports.GithubAuthController = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const swagger_1 = require("@nestjs/swagger");
+const crypto_1 = require("../../lib/crypto");
 const github_auth_guard_1 = require("../guards/github-auth.guard");
 const github_auth_service_1 = require("../providers/github-auth.service");
 let GithubAuthController = class GithubAuthController {
@@ -30,7 +31,6 @@ let GithubAuthController = class GithubAuthController {
         const response = await this.githubAuthService.signIn(req);
         const { accessToken, username, email, userId } = response;
         const clientUrl = this.configService.get("allowedOrigin");
-        const nodeEnv = this.configService.get("nodeEnv");
         const payloadStringfied = JSON.stringify({
             accessToken,
             username,
@@ -38,21 +38,10 @@ let GithubAuthController = class GithubAuthController {
             userId,
             fromServer: true,
         });
-        res.cookie("serverResponseData", payloadStringfied, {
-            httpOnly: true,
-            sameSite: "none",
-            secure: nodeEnv !== "development",
-            maxAge: 1000 * 5,
-            priority: "high",
-        });
-        res.cookie("fromServer", "true", {
-            httpOnly: false,
-            sameSite: "none",
-            secure: nodeEnv !== "development",
-            maxAge: 1000 * 5,
-            priority: "high",
-        });
-        return res.redirect(clientUrl + "/login");
+        const algorithm = this.configService.get("queryParams.algorithm");
+        const secretKey = this.configService.get("queryParams.secret");
+        const encryptedPayload = (0, crypto_1.encrypt)(payloadStringfied, algorithm, secretKey, 16);
+        return res.redirect(clientUrl + "/login" + `?payload=${JSON.stringify(encryptedPayload)}`);
     }
 };
 exports.GithubAuthController = GithubAuthController;

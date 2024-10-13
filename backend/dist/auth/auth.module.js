@@ -14,6 +14,7 @@ const jwt_1 = require("@nestjs/jwt");
 const passport_1 = require("@nestjs/passport");
 const sequelize_1 = require("@nestjs/sequelize");
 const env_github_1 = require("../configs/env.github");
+const env_secrets_1 = require("../configs/env.secrets");
 const user_entity_1 = require("../user/entities/user.entity");
 const github_auth_controller_1 = require("./controllers/github-auth.controller");
 const local_auth_controller_1 = require("./controllers/local-auth.controller");
@@ -28,6 +29,7 @@ exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forFeature(env_github_1.default),
+            config_1.ConfigModule.forFeature(env_secrets_1.default),
             sequelize_1.SequelizeModule.forFeature([user_entity_1.User]),
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],
