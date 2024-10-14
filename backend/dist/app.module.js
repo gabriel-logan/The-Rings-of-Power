@@ -18,6 +18,7 @@ const app_controller_1 = require("./app.controller");
 const auth_module_1 = require("./auth/auth.module");
 const env_global_1 = require("./configs/env.global");
 const sequelize_config_1 = require("./configs/sequelize.config");
+const throttler_config_1 = require("./configs/throttler.config");
 const ring_module_1 = require("./ring/ring.module");
 const user_module_1 = require("./user/user.module");
 let AppModule = class AppModule {
@@ -26,33 +27,10 @@ exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            throttler_1.ThrottlerModule.forRoot([throttler_config_1.throttlerGlobalConfig]),
             config_1.ConfigModule.forRoot({
                 load: [env_global_1.default],
             }),
-            throttler_1.ThrottlerModule.forRoot([
-                {
-                    ttl: (0, throttler_1.seconds)(10),
-                    limit: 3,
-                    blockDuration: (context) => {
-                        const request = context.switchToHttp().getRequest();
-                        if (request.method === "POST" && request.url === "/user") {
-                            return (0, throttler_1.seconds)(8);
-                        }
-                        if (request.method === "DELETE") {
-                            return (0, throttler_1.seconds)(60);
-                        }
-                        if (request.method === "PUT") {
-                            return (0, throttler_1.seconds)(15);
-                        }
-                        return (0, throttler_1.seconds)(20);
-                    },
-                    skipIf: (context) => {
-                        const request = context.switchToHttp().getRequest();
-                        const isGetRequest = request.method === "GET";
-                        return isGetRequest;
-                    },
-                },
-            ]),
             sequelize_1.SequelizeModule.forRootAsync(sequelize_config_1.default),
             serve_static_1.ServeStaticModule.forRoot({
                 rootPath: (0, path_1.join)(__dirname, "..", "public"),

@@ -4,6 +4,7 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const core_1 = require("@nestjs/core");
 const swagger_1 = require("@nestjs/swagger");
+const compression = require("compression");
 const helmet_1 = require("helmet");
 const app_module_1 = require("./app.module");
 async function bootstrap() {
@@ -23,6 +24,7 @@ async function bootstrap() {
             crossOriginResourcePolicy: { policy: "cross-origin" },
         }));
     }
+    app.use(compression());
     const config = new swagger_1.DocumentBuilder()
         .setTitle("Junior-Challenge")
         .setDescription("Junior-Challenge API")

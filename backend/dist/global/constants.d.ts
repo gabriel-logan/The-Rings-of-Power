@@ -14,3 +14,17 @@ export declare const fileValidation: {
         allowedTypes: FileTypeValidatorOptions["fileType"];
     };
 };
+export declare const throttler: {
+    global: {
+        ttl: number;
+        limit: number;
+        blockDuration: {
+            POST: {
+                "/user": number;
+            };
+            DELETE: number;
+            PUT: number;
+            default: number;
+        };
+    };
+};
