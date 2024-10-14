@@ -9,8 +9,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
+const core_1 = require("@nestjs/core");
 const sequelize_1 = require("@nestjs/sequelize");
 const serve_static_1 = require("@nestjs/serve-static");
+const throttler_1 = require("@nestjs/throttler");
 const path_1 = require("path");
 const app_controller_1 = require("./app.controller");
 const auth_module_1 = require("./auth/auth.module");
@@ -27,6 +29,30 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 load: [env_global_1.default],
             }),
+            throttler_1.ThrottlerModule.forRoot([
+                {
+                    ttl: (0, throttler_1.seconds)(10),
+                    limit: 3,
+                    blockDuration: (context) => {
+                        const request = context.switchToHttp().getRequest();
+                        if (request.method === "POST" && request.url === "/user") {
+                            return (0, throttler_1.seconds)(8);
+                        }
+                        if (request.method === "DELETE") {
+                            return (0, throttler_1.seconds)(60);
+                        }
+                        if (request.method === "PUT") {
+                            return (0, throttler_1.seconds)(15);
+                        }
+                        return (0, throttler_1.seconds)(20);
+                    },
+                    skipIf: (context) => {
+                        const request = context.switchToHttp().getRequest();
+                        const isGetRequest = request.method === "GET";
+                        return isGetRequest;
+                    },
+                },
+            ]),
             sequelize_1.SequelizeModule.forRootAsync(sequelize_config_1.default),
             serve_static_1.ServeStaticModule.forRoot({
                 rootPath: (0, path_1.join)(__dirname, "..", "public"),
@@ -38,6 +64,12 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
         ],
         controllers: [app_controller_1.AppController],
+        providers: [
+            {
+                provide: core_1.APP_GUARD,
+                useClass: throttler_1.ThrottlerGuard,
+            },
+        ],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
