@@ -108,4 +108,17 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
       return Promise.resolve(url);
     },
   },
+
+  cookies: {
+    csrfToken: {
+      options: {
+        maxAge: 60 * 60, // 1 hour
+      },
+    },
+    sessionToken: {
+      options: {
+        maxAge: 60 * 60 * 24 * 6.5, // 6.5 days
+      },
+    },
+  },
 });
