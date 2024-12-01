@@ -6,14 +6,21 @@ To set up the project, follow these steps:
 
 Start by creating a `.env` file with the same variables and values as found in the `.env.example` file.
 
+```IMPORTANT```
+Don't forget to configure the same key for the `frontend`, I'm using node crypto to encrypt the url
+
+QUERYPARAMS_OAUTH_PRIVATE_KEY
+
+This setting is only essential for logging in via OAuth using github. As an additional form of security.
+
 ### 2. Database Setup
 
-Create a schema in MySQL, and set its name as the `DB_NAME` value in the `.env` file. If the `NODE_ENV` is not set to `production`, Sequelize will automatically load and sync the tables in the MySQL database.
+Create a schema in MySQL, and set its name as the `DB_NAME` value in the `.env` file.
 
 ### 3. API Documentation
 
 You can find the API documentation in two locations:
-- Swagger UI: [http://192.168.100.3:3000/api](http://192.168.100.3:3000/api)
+- Swagger UI: [http://localhost:3000/api](http://localhost:3000/api)
 - Insomnia/Postman: In the root folder, there is an `Insomnia.json` file that can be imported into Insomnia or Postman for easy API testing.
 
 ---
@@ -57,6 +64,13 @@ You can run various tests to ensure your application is working as expected:
 
 For e2e testing, remember to check if the information passed exists in the database.
 
+Make sure you have a test user
+
+id: 1
+email: admin@admin.com
+password: admin
+for supertest to work properly, OR add a user and modify the tests
+
 - **Unit Tests**:
     ```bash
     yarn test
@@ -76,5 +90,14 @@ For e2e testing, remember to check if the information passed exists in the datab
     ```bash
     yarn test:all
     ```
+
+## 🌐 Demonstração do Projeto
+
+### Documentação da API - Produção
+A documentação da API foi construída utilizando Swagger, permitindo uma visualização clara e interativa das rotas disponíveis. Acesse a documentação aqui: [Documentação da API](https://api-junior-challenge.vercel.app/api).
+
+Na documentação, você encontrará detalhes sobre cada endpoint, exemplos de requisições e respostas, além de descrições de erros comuns.
+
+--- 
 
 Created by: Gabriel Logan

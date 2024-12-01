@@ -1,10 +1,17 @@
-# Frontend - Getting Started.
+# Frontend - Getting Started
 
 To set up the project, follow these steps:
 
 ### 1. Create a `.env.local` File
 
 Begin by creating a `.env.local` file in the root folder. Use the variables and values from the `.env.local.example` file as a starting point.
+
+```IMPORTANT```
+Don't forget to configure the same key for the `backend`, I'm using node crypto to encrypt the url
+
+QUERYPARAMS_OAUTH_PRIVATE_KEY
+
+This setting is only essential for logging in via OAuth using github. As an additional form of security.
 
 ### 2. Essential Configuration
 
@@ -15,7 +22,7 @@ For example, if you're running the app locally on `http://localhost:3001`, your 
 AUTH_TRUST_HOST=http://localhost:3001
 ```
 
-Additionally, ensure that the backend's `baseURL` is correctly configured in the Axios instance. You can set it in:
+Additionally, ensure that the backend's `baseURL` is correctly configured in the Axios instance. You can set it in: NEXT_PUBLIC_API_BASE_HOST at .env.local file
 
 ```
 frontend/src/service/axiosInstance/index.ts
@@ -62,6 +69,14 @@ Once the server is running, visit [http://localhost:3001](http://localhost:3001)
 
 You can run end-to-end (e2e) tests using Cypress. Follow these steps:
 
+Make sure you have a test user
+
+id: 1
+username: admin
+password: admin
+
+for cypress to work properly, OR add a user and modify the tests
+
 1. Start the development server:
     ```bash
     yarn dev
@@ -70,5 +85,12 @@ You can run end-to-end (e2e) tests using Cypress. Follow these steps:
     ```bash
     yarn cy:open
     ```
+
+## 🌐 Demonstração do Projeto
+
+### Site em Produção
+Explore a aplicação desenvolvida para o desafio: [Visite o Site](https://gl-junior-challenge.vercel.app). Aqui, você pode interagir com a interface e ver como os anéis são gerenciados, incluindo as funcionalidades de criação, visualização e edição.
+
+--- 
 
 Created by: Gabriel Logan

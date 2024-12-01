@@ -45,12 +45,13 @@ export class GithubAuthController {
 
     const algorithm = "aes-256-ctr";
     const secretKey = this.configService.get("queryParams.secret");
+    const ivSize = 16;
 
     const encryptedPayload = encrypt(
       payloadStringfied,
       algorithm,
       secretKey,
-      16,
+      ivSize,
     );
 
     return res.redirect(

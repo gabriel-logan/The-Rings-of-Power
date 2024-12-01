@@ -40,7 +40,8 @@ let GithubAuthController = class GithubAuthController {
         });
         const algorithm = "aes-256-ctr";
         const secretKey = this.configService.get("queryParams.secret");
-        const encryptedPayload = (0, crypto_1.encrypt)(payloadStringfied, algorithm, secretKey, 16);
+        const ivSize = 16;
+        const encryptedPayload = (0, crypto_1.encrypt)(payloadStringfied, algorithm, secretKey, ivSize);
         return res.redirect(clientUrl + "/login" + `?payload=${JSON.stringify(encryptedPayload)}`);
     }
 };
