@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   ),
 
   title: {
-    default: "Junior-Challenge - Gabriel Logan",
-    template: "%s | Junior-Challenge - Gabriel Logan",
+    default: "The Rings of Power",
+    template: "%s | The Rings of Power",
   },
 
   description: "Desafio Fullstack: Os Anéis de Poder",
@@ -28,12 +28,12 @@ export const metadata: Metadata = {
   generator: "Next.js",
 
   openGraph: {
-    title: "Junior-Challenge - Gabriel Logan - Fullstack Developer Challenge",
+    title: "The Rings of Power - Gabriel Logan - Fullstack Developer Challenge",
     description:
       "Desafio Fullstack: Os Anéis de Poder. Este desafio é uma oportunidade para demonstrar habilidades em desenvolvimento fullstack, utilizando tecnologias modernas como Next.js e TypeScript, com foco em criar uma aplicação web robusta e escalável.",
     url:
       process.env.AUTH_TRUST_HOST ?? "https://gl-junior-challenge.vercel.app",
-    siteName: "Junior-Challenge - Gabriel Logan",
+    siteName: "The Rings of Power - Gabriel Logan",
     type: "website",
   },
 
@@ -46,6 +46,7 @@ export const metadata: Metadata = {
     "nextjs",
     "typescript",
     "lord of the rings",
+    "The Rings of Power",
   ],
 
   appleWebApp: {
