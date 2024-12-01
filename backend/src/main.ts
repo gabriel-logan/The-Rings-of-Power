@@ -35,8 +35,8 @@ async function bootstrap(): Promise<void> {
   app.use(compression());
 
   const config = new DocumentBuilder()
-    .setTitle("Junior-Challenge")
-    .setDescription("Junior-Challenge API")
+    .setTitle("The-Rings-of-Power")
+    .setDescription("The-Rings-of-Power API")
     .setVersion("1.0")
     .addBearerAuth(undefined, "defaultBearerAuth")
     .build();
@@ -44,7 +44,7 @@ async function bootstrap(): Promise<void> {
   const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup("api", app, document, {
-    customSiteTitle: "Junior-Challenge API",
+    customSiteTitle: "The-Rings-of-Power API",
   });
 
   await app.listen(port, () => {

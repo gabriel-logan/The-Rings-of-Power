@@ -26,14 +26,14 @@ async function bootstrap() {
     }
     app.use(compression());
     const config = new swagger_1.DocumentBuilder()
-        .setTitle("Junior-Challenge")
-        .setDescription("Junior-Challenge API")
+        .setTitle("The-Rings-of-Power")
+        .setDescription("The-Rings-of-Power API")
         .setVersion("1.0")
         .addBearerAuth(undefined, "defaultBearerAuth")
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
     swagger_1.SwaggerModule.setup("api", app, document, {
-        customSiteTitle: "Junior-Challenge API",
+        customSiteTitle: "The-Rings-of-Power API",
     });
     await app.listen(port, () => {
         logger.verbose(`Server is running on ${baseUrl}`);
