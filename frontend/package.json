@@ -1,6 +1,13 @@
 {
   "name": "ring",
-  "version": "0.1.0",
+  "description": "Frontend application for Ring",
+  "author": {
+    "name": "Gabriel Logan",
+    "url": "https://github.com/gabriel-logan"
+  },
+  "homepage": "https://gl-junior-challenge.vercel.app",
+  "version": "1.0.0",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
