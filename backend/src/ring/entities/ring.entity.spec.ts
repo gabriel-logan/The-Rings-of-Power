@@ -20,6 +20,7 @@ describe("Ring Entity", () => {
   });
 
   it("should return the correct URL for the image", async () => {
+    process.env.NODE_ENV = "development";
     // Create a new ring instance
     await Ring.create({
       name: "One Ring",
@@ -33,7 +34,7 @@ describe("Ring Entity", () => {
     const foundRing = await Ring.findOne({ where: { name: "One Ring" } });
 
     // Test the URL getter
-    const expectedUrl = `${process.env.IMAGES_URL ?? "http://localhost:3000/uploads"}/one_ring.png`;
+    const expectedUrl = `${process.env.IMAGES_URL || "http://localhost:3000/uploads"}/one_ring.png`; // nosonar
     expect(foundRing?.url).toBe(expectedUrl);
   });
 });

@@ -1,5 +1,6 @@
 import { CacheModule } from "@nestjs/cache-manager";
 import { NotFoundException } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { getModelToken } from "@nestjs/sequelize";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
@@ -26,7 +27,12 @@ describe("GithubUserService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [CacheModule.register(cacheModuleOptions)],
+      imports: [
+        CacheModule.register(cacheModuleOptions),
+        ConfigModule.forFeature(() => ({
+          nodeEnv: "development",
+        })),
+      ],
       providers: [
         GithubUserService,
         {
@@ -204,7 +210,7 @@ describe("GithubUserService", () => {
       expect(unlinkSyncSpy).toHaveBeenCalledWith(filePath);
     });
 
-    it("should delete a user and delete all rings associated", async () => {
+    it("should delete a user and delete all rings associated when nodeEnv = dev", async () => {
       const user = {
         id: 1,
         destroy: jest.fn(),

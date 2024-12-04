@@ -9,8 +9,8 @@ describe("throttlerGlobalConfig", () => {
     expect(config.ttl).toBe(10 * 1000);
   });
 
-  it("should have a limit of 5", () => {
-    expect(config.limit).toBe(5);
+  it("should have a limit of 3", () => {
+    expect(config.limit).toBe(3);
   });
 
   describe("blockDuration", () => {

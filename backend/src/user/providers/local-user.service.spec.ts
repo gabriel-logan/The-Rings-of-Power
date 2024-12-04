@@ -1,5 +1,6 @@
 import { CacheModule } from "@nestjs/cache-manager";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { getModelToken } from "@nestjs/sequelize";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
@@ -26,7 +27,12 @@ describe("LocalUserService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [CacheModule.register(cacheModuleOptions)],
+      imports: [
+        CacheModule.register(cacheModuleOptions),
+        ConfigModule.forFeature(() => ({
+          nodeEnv: "development",
+        })),
+      ],
       providers: [
         LocalUserService,
         {
