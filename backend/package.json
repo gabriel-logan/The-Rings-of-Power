@@ -6,7 +6,7 @@
     "name": "Gabriel Logan",
     "url": "https://github.com/gabriel-logan"
   },
-  "homepage": "https://gl-junior-challenge.vercel.app",
+  "homepage": "https://api-junior-challenge.vercel.app/api",
   "private": true,
   "license": "MIT",
   "scripts": {
