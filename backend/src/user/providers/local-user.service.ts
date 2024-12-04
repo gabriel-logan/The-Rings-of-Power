@@ -32,6 +32,7 @@ export class LocalUserService extends UserGlobalValidations {
 
   private readonly blobReadWriteToken =
     this.configService.get<string>("blobReadWriteToken");
+  private readonly nodeEnv = this.configService.get<string>("nodeEnv");
 
   constructor(
     private readonly configService: ConfigService,
@@ -227,27 +228,31 @@ export class LocalUserService extends UserGlobalValidations {
 
     await this.validatePassword(user, password);
 
-    // Delete all rings images when user is deleted
-    // const deleteImagesPromises = user.rings.map(async (ring) => {
-    //  await this.deleteRingImage(ring.image);
-    // });
+    let deleteImagesPromises: Promise<void>[] = [];
 
-    // Delete all rings images when deleting user
-    const deleteImagePromises = user.rings.map(async (ring) => {
-      try {
-        await del(ring.image, {
-          token: this.blobReadWriteToken,
-        });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        this.logger.error(
-          `Failed to delete image for ring ${ring.id}: ${error.message}`,
-        );
-      }
-    });
+    if (this.nodeEnv === "development") {
+      // Delete all rings images when user is deleted
+      deleteImagesPromises = user.rings.map(async (ring) => {
+        await this.deleteRingImage(ring.image);
+      });
+    } else {
+      // Delete all rings images when deleting user
+      deleteImagesPromises = user.rings.map(async (ring) => {
+        try {
+          await del(ring.image, {
+            token: this.blobReadWriteToken,
+          });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          this.logger.error(
+            `Failed to delete image for ring ${ring.id}: ${error.message}`,
+          );
+        }
+      });
+    }
 
     // Delete all rings
-    await Promise.all(deleteImagePromises);
+    await Promise.all(deleteImagesPromises);
 
     await user.destroy();
 

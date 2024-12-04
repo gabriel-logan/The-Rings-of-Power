@@ -23,6 +23,7 @@ export class RingService extends RingGlobalValidations {
 
   private readonly blobReadWriteToken =
     this.configService.get<string>("blobReadWriteToken");
+  private readonly nodeEnv = this.configService.get<string>("nodeEnv");
 
   constructor(
     private readonly configService: ConfigService,
@@ -119,28 +120,39 @@ export class RingService extends RingGlobalValidations {
       req.user.sub,
     );
 
-    const blob = await put(file.originalname, file.buffer, {
-      access: "public",
-      token: this.blobReadWriteToken,
-    });
-
-    // Generate a new unique image name
-    // const newImageName = this.generateNewUniqueImageName(file.originalname);
-
     let newRing: Ring;
 
     try {
-      newRing = await this.ringModel.create({
-        name,
-        power,
-        owner,
-        forgedBy,
-        image: blob.url,
-        userId: req.user.sub,
-      });
+      if (this.nodeEnv === "development") {
+        // Generate a new unique image name
+        const newImageName = this.generateNewUniqueImageName(file.originalname);
 
-      // Save or update ring image
-      // await this.saveRingImage(file.buffer, newImageName);
+        newRing = await this.ringModel.create({
+          name,
+          power,
+          owner,
+          forgedBy,
+          image: newImageName,
+          userId: req.user.sub,
+        });
+
+        // Save or update ring image
+        await this.saveRingImage(file.buffer, newImageName);
+      } else {
+        const blob = await put(file.originalname, file.buffer, {
+          access: "public",
+          token: this.blobReadWriteToken,
+        });
+
+        newRing = await this.ringModel.create({
+          name,
+          power,
+          owner,
+          forgedBy,
+          image: blob.url,
+          userId: req.user.sub,
+        });
+      }
     } catch {
       throw new BadRequestException("Error creating ring");
     }
@@ -193,21 +205,25 @@ export class RingService extends RingGlobalValidations {
 
     // Save or update ring image
     if (file) {
-      // const imageSaved = await this.updateRingImage(file, ring.image);
+      if (this.nodeEnv === "development") {
+        const imageSaved = await this.updateRingImage(file, ring.image);
 
-      await this.validateImageType(file.buffer);
+        ring.image = imageSaved;
+      } else {
+        await this.validateImageType(file.buffer);
 
-      // Delete the old image
-      await del(ring.image, {
-        token: this.blobReadWriteToken,
-      });
+        // Delete the old image
+        await del(ring.image, {
+          token: this.blobReadWriteToken,
+        });
 
-      const blob = await put(file.originalname, file.buffer, {
-        access: "public",
-        token: this.blobReadWriteToken,
-      });
+        const blob = await put(file.originalname, file.buffer, {
+          access: "public",
+          token: this.blobReadWriteToken,
+        });
 
-      ring.image = blob.url;
+        ring.image = blob.url;
+      }
     }
 
     ring.name = name || ring.name; // nosonar
@@ -239,19 +255,21 @@ export class RingService extends RingGlobalValidations {
       throw new NotFoundException(`Ring with id ${id} not found`);
     }
 
-    try {
-      await del(ring.image, {
-        token: this.blobReadWriteToken,
-      });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      this.logger.error(
-        `Failed to delete image for ring ${id}: ${error.message}`,
-      );
-      throw new BadRequestException(`Failed to delete image for ring`);
+    if (this.nodeEnv === "development") {
+      await this.deleteRingImage(ring.image);
+    } else {
+      try {
+        await del(ring.image, {
+          token: this.blobReadWriteToken,
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        this.logger.error(
+          `Failed to delete image for ring ${id}: ${error.message}`,
+        );
+        throw new BadRequestException(`Failed to delete image for ring`);
+      }
     }
-
-    // await this.deleteRingImage(ring.image);
 
     await ring.destroy();
 

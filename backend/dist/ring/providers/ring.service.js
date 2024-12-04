@@ -30,6 +30,7 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
         this.cacheManager = cacheManager;
         this.logger = new common_1.Logger(RingService_1.name);
         this.blobReadWriteToken = this.configService.get("blobReadWriteToken");
+        this.nodeEnv = this.configService.get("nodeEnv");
     }
     async findAll(req) {
         const cachedRings = await this.cacheManager.get(constants_1.cacheKeys.rings(req.user.sub));
@@ -80,20 +81,34 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
             throw new common_1.BadRequestException(`Invalid forgedBy value: ${forgedBy}`);
         }
         await this.validateRingCreation(this.ringModel, createRingDto.forgedBy, req.user.sub);
-        const blob = await (0, blob_1.put)(file.originalname, file.buffer, {
-            access: "public",
-            token: this.blobReadWriteToken,
-        });
         let newRing;
         try {
-            newRing = await this.ringModel.create({
-                name,
-                power,
-                owner,
-                forgedBy,
-                image: blob.url,
-                userId: req.user.sub,
-            });
+            if (this.nodeEnv === "development") {
+                const newImageName = this.generateNewUniqueImageName(file.originalname);
+                newRing = await this.ringModel.create({
+                    name,
+                    power,
+                    owner,
+                    forgedBy,
+                    image: newImageName,
+                    userId: req.user.sub,
+                });
+                await this.saveRingImage(file.buffer, newImageName);
+            }
+            else {
+                const blob = await (0, blob_1.put)(file.originalname, file.buffer, {
+                    access: "public",
+                    token: this.blobReadWriteToken,
+                });
+                newRing = await this.ringModel.create({
+                    name,
+                    power,
+                    owner,
+                    forgedBy,
+                    image: blob.url,
+                    userId: req.user.sub,
+                });
+            }
         }
         catch {
             throw new common_1.BadRequestException("Error creating ring");
@@ -122,15 +137,21 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
             await this.validateRingCreation(this.ringModel, updateRingDto.forgedBy, req.user.sub, ring);
         }
         if (file) {
-            await this.validateImageType(file.buffer);
-            await (0, blob_1.del)(ring.image, {
-                token: this.blobReadWriteToken,
-            });
-            const blob = await (0, blob_1.put)(file.originalname, file.buffer, {
-                access: "public",
-                token: this.blobReadWriteToken,
-            });
-            ring.image = blob.url;
+            if (this.nodeEnv === "development") {
+                const imageSaved = await this.updateRingImage(file, ring.image);
+                ring.image = imageSaved;
+            }
+            else {
+                await this.validateImageType(file.buffer);
+                await (0, blob_1.del)(ring.image, {
+                    token: this.blobReadWriteToken,
+                });
+                const blob = await (0, blob_1.put)(file.originalname, file.buffer, {
+                    access: "public",
+                    token: this.blobReadWriteToken,
+                });
+                ring.image = blob.url;
+            }
         }
         ring.name = name || ring.name;
         ring.power = power || ring.power;
@@ -153,14 +174,19 @@ let RingService = RingService_1 = class RingService extends RingGlobalValidation
         if (!ring) {
             throw new common_1.NotFoundException(`Ring with id ${id} not found`);
         }
-        try {
-            await (0, blob_1.del)(ring.image, {
-                token: this.blobReadWriteToken,
-            });
+        if (this.nodeEnv === "development") {
+            await this.deleteRingImage(ring.image);
         }
-        catch (error) {
-            this.logger.error(`Failed to delete image for ring ${id}: ${error.message}`);
-            throw new common_1.BadRequestException(`Failed to delete image for ring`);
+        else {
+            try {
+                await (0, blob_1.del)(ring.image, {
+                    token: this.blobReadWriteToken,
+                });
+            }
+            catch (error) {
+                this.logger.error(`Failed to delete image for ring ${id}: ${error.message}`);
+                throw new common_1.BadRequestException(`Failed to delete image for ring`);
+            }
         }
         await ring.destroy();
         await this.cacheManager.del(constants_1.cacheKeys.rings(req.user.sub));

@@ -14,6 +14,7 @@ export declare class LocalUserService extends UserGlobalValidations {
     private readonly atributesToShow;
     private readonly includeAtributes;
     private readonly blobReadWriteToken;
+    private readonly nodeEnv;
     constructor(configService: ConfigService, userModel: typeof User, cacheManager: Cache);
     findAll(): Promise<User[]>;
     findByPk(id: number): Promise<User>;

@@ -31,6 +31,7 @@ let GithubUserService = GithubUserService_1 = class GithubUserService extends Us
         this.cacheManager = cacheManager;
         this.logger = new common_1.Logger(GithubUserService_1.name);
         this.blobReadWriteToken = this.configService.get("blobReadWriteToken");
+        this.nodeEnv = this.configService.get("nodeEnv");
     }
     async update(id, user, req) {
         const { username } = user;
@@ -76,17 +77,25 @@ let GithubUserService = GithubUserService_1 = class GithubUserService extends Us
         if (!user?.githubUserId) {
             throw new common_1.BadRequestException("User is not a Github user");
         }
-        const deleteImagePromises = user.rings.map(async (ring) => {
-            try {
-                await (0, blob_1.del)(ring.image, {
-                    token: this.blobReadWriteToken,
-                });
-            }
-            catch (error) {
-                this.logger.error(`Failed to delete image for ring ${ring.id}: ${error.message}`);
-            }
-        });
-        await Promise.all(deleteImagePromises);
+        let deleteImagesPromises = [];
+        if (this.nodeEnv === "development") {
+            deleteImagesPromises = user.rings.map(async (ring) => {
+                await this.deleteRingImage(ring.image);
+            });
+        }
+        else {
+            deleteImagesPromises = user.rings.map(async (ring) => {
+                try {
+                    await (0, blob_1.del)(ring.image, {
+                        token: this.blobReadWriteToken,
+                    });
+                }
+                catch (error) {
+                    this.logger.error(`Failed to delete image for ring ${ring.id}: ${error.message}`);
+                }
+            });
+        }
+        await Promise.all(deleteImagesPromises);
         await user.destroy();
         await this.cacheManager.del(constants_1.cacheKeys.users());
         await this.cacheManager.del(constants_1.cacheKeys.user(id));

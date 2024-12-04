@@ -33,7 +33,6 @@ export class GithubAuthController {
     const { accessToken, username, email, userId } = response;
 
     const clientUrl = this.configService.get("allowedOrigin");
-    // const nodeEnv = this.configService.get("nodeEnv");
 
     const payloadStringfied = JSON.stringify({
       accessToken,

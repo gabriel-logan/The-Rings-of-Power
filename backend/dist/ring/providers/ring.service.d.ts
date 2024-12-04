@@ -11,6 +11,7 @@ export declare class RingService extends RingGlobalValidations {
     private readonly cacheManager;
     private readonly logger;
     private readonly blobReadWriteToken;
+    private readonly nodeEnv;
     constructor(configService: ConfigService, ringModel: typeof Ring, cacheManager: Cache);
     findAll(req: ReqUser): Promise<Ring[]>;
     findOne(id: number, req: ReqUser): Promise<Ring>;
