@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.56.2",
+    "@vercel/analytics": "^1.4.1",
     "add": "^2.0.6",
     "axios": "^1.7.7",
     "cookies-next": "^4.2.1",

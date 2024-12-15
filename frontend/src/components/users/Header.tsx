@@ -16,7 +16,7 @@ export default async function Header() {
   return (
     <header className="flex h-28 flex-col items-center justify-evenly bg-gradient-to-r from-gray-900 to-gray-800 px-2 shadow-lg sm:px-6 md:h-[4.5rem] md:flex-row md:justify-between">
       {/* Logo and Title */}
-      <div className="flex items-center gap-2">
+      <Link href="/users" className="flex cursor-pointer items-center gap-2">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -40,7 +40,7 @@ export default async function Header() {
         >
           The Rings of Power
         </motion.h1>
-      </div>
+      </Link>
 
       {/* Buttons Section */}
       <div
